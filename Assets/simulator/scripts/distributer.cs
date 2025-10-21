@@ -26,10 +26,24 @@ public class WireDataset
 public class distributer : MonoBehaviour
 {
     #region Configuration Fields
-    
+
+    [Header("Configuration")]
+    [SerializeField] private UserConfig configuration;
+
     [Header("Rectangle Dimensions (meters)")]
-    [SerializeField, Range(0.1f, 10f)] private float plateWidthX = 1.5f;
-    [SerializeField, Range(0.1f, 10f)] private float plateHeightZ = 1.2f;
+    [SerializeField, Range(0.1f, 10f)]
+    private float plateWidthXInternal = 1f;
+
+    [SerializeField]
+    public float PlateWidthX = 1f;
+
+
+
+    [SerializeField, Range(0.1f, 10f)]
+    private float plateHeightZInternal = 1f;
+    
+    [SerializeField]
+    private float plateHeightZ = 1f;
 
     [Header("Margins (meters) — Layout Bounds Only")]
     [SerializeField, Min(0f)] private float marginX = 0.0f;
@@ -69,9 +83,8 @@ public class distributer : MonoBehaviour
     [Header("Grid Sizing")]
     [SerializeField] private GridSizingMode gridSizing = GridSizingMode.AutoMatchTarget;
     [SerializeField, Range(0.01f, 1f), Tooltip("Fixed horizontal spacing (meters)")]
-    
     private float spacingX = 0.10f;
-    [SerializeField, Range(0.01f, 1f), Tooltip("Fixed vearticaal spacing (meters)")]
+    [SerializeField, Range(0.01f, 1f), Tooltip("Fixed vertical spacing (meters)")]
     private float spacingZ = 0.08f;
 
     [Header("Auto Match Settings")]
@@ -106,6 +119,10 @@ public class distributer : MonoBehaviour
     [SerializeField] private bool showColumnBounds = false;
     [SerializeField] private bool colorCodeByRow = false;
     [SerializeField] private bool showStatistics = true;
+
+    // Added: Option to auto-build in Play Mode
+    [Header("Play Mode Settings")]
+    [SerializeField] private bool autoBuildInPlayMode = true;
 
     #endregion
 
@@ -160,6 +177,69 @@ public class distributer : MonoBehaviour
 
     #endregion
 
+    #region Unity Callbacks
+
+    // Added: Initialize in Play Mode
+    private void Start()
+    {
+
+
+        PlateWidthX = configuration != null ? configuration.xSize : plateWidthXInternal;
+        plateHeightZ = configuration != null ? configuration.ySize : plateHeightZInternal;
+
+
+        if (Application.isPlaying && autoBuildInPlayMode)
+        {
+            Build();
+        }
+    }
+
+    private void OnValidate()
+    {
+        splitLeft = Mathf.Clamp01(splitLeft);
+        splitRight = Mathf.Clamp01(splitRight);
+        if (splitRight < splitLeft + 0.01f)
+            splitRight = splitLeft + 0.01f;
+
+        // Added: Ensure AnimationCurves are initialized
+        if (topCurve == null) topCurve = AnimationCurve.EaseInOut(0, 0, 1, 0);
+        if (bottomLeft == null) bottomLeft = new AnimationCurve(new Keyframe(0, 0), new Keyframe(1, 0.3f));
+        if (bottomCenter == null) bottomCenter = new AnimationCurve(new Keyframe(0, 0.3f), new Keyframe(1, 0.6f));
+        if (bottomRight == null) bottomRight = new AnimationCurve(new Keyframe(0, 0.6f), new Keyframe(1, 0));
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        DrawOuterBounds();
+        DrawUsableBounds();
+        
+        if (showCurvePoints)
+        {
+            DrawTopCurve();
+            DrawBottomCurve();
+            DrawCurveControlPoints();
+        }
+        
+        if (showGridCandidates)
+        {
+            DrawGridCandidates();
+        }
+        
+        if (showColumnBounds)
+        {
+            DrawColumnBoundaries();
+        }
+        
+        DrawSpawnedPoints();
+        
+        if (showStatistics)
+        {
+            DrawStatisticsOverlay();
+        }
+    }
+
+    #endregion
+
     #region Public API
 
     /// <summary>
@@ -183,17 +263,17 @@ public class distributer : MonoBehaviour
     [ContextMenu("Clear All Points")]
     public void ClearAllPoints()
     {
-        foreach (var point in spawnedPoints)
+        for (int i = spawnedPoints.Count - 1; i >= 0; i--)
         {
-            if (point != null)
+            if (spawnedPoints[i] != null)
             {
                 #if UNITY_EDITOR
                 if (Application.isPlaying)
-                    Destroy(point.gameObject);
+                    Destroy(spawnedPoints[i].gameObject);
                 else
-                    DestroyImmediate(point.gameObject);
+                    DestroyImmediate(spawnedPoints[i].gameObject);
                 #else
-                Destroy(point.gameObject);
+                Destroy(spawnedPoints[i].gameObject);
                 #endif
             }
         }
@@ -238,7 +318,7 @@ public class distributer : MonoBehaviour
         var metrics = new GridMetrics
         {
             Mode = gridSizing,
-            UsableWidth = Mathf.Max(0f, plateWidthX - 2f * marginX),
+            UsableWidth = Mathf.Max(0f, PlateWidthX - 2f * marginX),
             UsableHeight = Mathf.Max(0f, plateHeightZ - 2f * marginZ)
         };
         
@@ -259,7 +339,7 @@ public class distributer : MonoBehaviour
 
     private int CalculateTargetPoints()
     {
-        float fullArea = plateWidthX * plateHeightZ;
+        float fullArea = PlateWidthX * plateHeightZ;
         return Mathf.Max(1, Mathf.RoundToInt((fullArea * constantPoints) / Mathf.Max(0.000001f, baseUnits)));
     }
 
@@ -278,6 +358,12 @@ public class distributer : MonoBehaviour
             Mathf.Max(1, Mathf.RoundToInt(Mathf.Sqrt(metrics.TargetPoints * Mathf.Clamp(aspect, 0.25f, 4f)))),
             minColsAuto, maxColsAuto);
         int rows = Mathf.Max(1, Mathf.RoundToInt(metrics.TargetPoints / (float)cols));
+
+        // Added: Performance safeguard for large iterations
+        if (cols * rows > 10000)
+        {
+            Debug.LogWarning($"[WireDistributor] Large grid detected ({cols}x{rows}). Consider reducing maxColsAuto or maxAutoIters.");
+        }
 
         // Iterative refinement
         for (int iter = 0; iter < maxAutoIters; iter++)
@@ -483,10 +569,24 @@ public class distributer : MonoBehaviour
         }
         else
         {
-            var obj = new GameObject(pointName);
-            obj.transform.SetParent(transform, false);
-            obj.transform.position = position;
-            pointTransform = obj.transform;
+            // Modified: Warn if prefab is missing in Play Mode
+            if (Application.isPlaying)
+            {
+                Debug.LogWarning($"[WireDistributor] pointPrefab is not assigned. Using default sphere in Play Mode.");
+                var obj = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                obj.transform.SetParent(transform, false);
+                obj.transform.position = position;
+                obj.transform.localScale = Vector3.one * gizmoRadius * 2f; // Match gizmo size
+                obj.name = pointName;
+                pointTransform = obj.transform;
+            }
+            else
+            {
+                var obj = new GameObject(pointName);
+                obj.transform.SetParent(transform, false);
+                obj.transform.position = position;
+                pointTransform = obj.transform;
+            }
         }
 
         // Add debug component for color coding
@@ -500,7 +600,7 @@ public class distributer : MonoBehaviour
     }
 
     /// <summary>
-    /// /// Generates curve visualization points for debugging.
+    /// Generates curve visualization points for debugging.
     /// </summary>
     private void GenerateCurveDebugPoints()
     {
@@ -590,13 +690,13 @@ public class distributer : MonoBehaviour
 
     private float GetLeftEdge()
     {
-        float baseX = centerOnOrigin ? transform.position.x - plateWidthX * 0.5f : transform.position.x;
+        float baseX = centerOnOrigin ? transform.position.x - PlateWidthX * 0.5f : transform.position.x;
         return baseX + marginX;
     }
 
     private float GetRightEdge()
     {
-        float baseX = centerOnOrigin ? transform.position.x + plateWidthX * 0.5f : transform.position.x + plateWidthX;
+        float baseX = centerOnOrigin ? transform.position.x + PlateWidthX * 0.5f : transform.position.x + PlateWidthX;
         return baseX - marginX;
     }
 
@@ -620,7 +720,7 @@ public class distributer : MonoBehaviour
     {
         if (!showDebugInfo) return;
 
-        float fullArea = plateWidthX * plateHeightZ;
+        float fullArea = PlateWidthX * plateHeightZ;
         float efficiency = metrics.TargetPoints > 0 ? (metrics.AcceptedPoints / (float)metrics.TargetPoints) * 100f : 0f;
         float fillRate = (metrics.Columns * metrics.Rows) > 0 ? (metrics.AcceptedPoints / (float)(metrics.Columns * metrics.Rows)) * 100f : 0f;
 
@@ -635,7 +735,7 @@ public class distributer : MonoBehaviour
 
         string report = $"<b><color=cyan>═══ WireDistributor Build Report ═══</color></b>\n\n" +
                        $"<b>Dimensions:</b>\n" +
-                       $"  • Plate Size: {plateWidthX:F3}m × {plateHeightZ:F3}m\n" +
+                       $"  • Plate Size: {PlateWidthX:F3}m × {plateHeightZ:F3}m\n" +
                        $"  • Full Area: {fullArea:F4}m²\n" +
                        $"  • Usable Area: {metrics.UsableArea:F4}m² (after margins)\n" +
                        $"  • Margins: X={marginX:F3}m, Z={marginZ:F3}m\n\n" +
@@ -685,7 +785,7 @@ public class distributer : MonoBehaviour
         }
 
         // Calculate density
-        float fullArea = plateWidthX * plateHeightZ;
+        float fullArea = PlateWidthX * plateHeightZ;
         float density = spawnedPoints.Count / fullArea;
 
         // Calculate bounding box
@@ -693,7 +793,7 @@ public class distributer : MonoBehaviour
         Vector3 max = Vector3.negativeInfinity;
         foreach (var pt in spawnedPoints)
         {
-            if (pt == null) continue;
+            if (pt == null) continue; // Added: Null check
             min = Vector3.Min(min, pt.position);
             max = Vector3.Max(max, pt.position);
         }
@@ -717,52 +817,14 @@ public class distributer : MonoBehaviour
 
     #endregion
 
-    #region Unity Callbacks
-
-    private void OnValidate()
-    {
-        splitLeft = Mathf.Clamp01(splitLeft);
-        splitRight = Mathf.Clamp01(splitRight);
-        if (splitRight < splitLeft + 0.01f)
-            splitRight = splitLeft + 0.01f;
-    }
-
-    private void OnDrawGizmosSelected()
-    {
-        DrawOuterBounds();
-        DrawUsableBounds();
-        
-        if (showCurvePoints)
-        {
-            DrawTopCurve();
-            DrawBottomCurve();
-            DrawCurveControlPoints();
-        }
-        
-        if (showGridCandidates)
-        {
-            DrawGridCandidates();
-        }
-        
-        if (showColumnBounds)
-        {
-            DrawColumnBoundaries();
-        }
-        
-        DrawSpawnedPoints();
-        
-        if (showStatistics)
-        {
-            DrawStatisticsOverlay();
-        }
-    }
+    #region Debug Visualization
 
     private void DrawOuterBounds()
     {
         Vector3 bl = GetOuterCorner(0, 0);
-        Vector3 br = GetOuterCorner(plateWidthX, 0);
+        Vector3 br = GetOuterCorner(PlateWidthX, 0);
         Vector3 tl = GetOuterCorner(0, plateHeightZ);
-        Vector3 tr = GetOuterCorner(plateWidthX, plateHeightZ);
+        Vector3 tr = GetOuterCorner(PlateWidthX, plateHeightZ);
 
         Gizmos.color = outerBoundsColor;
         Gizmos.DrawLine(bl, br);
@@ -888,6 +950,7 @@ public class distributer : MonoBehaviour
         }
         #endif
     }
+
     private void DrawStatisticsOverlay()
     {
         #if UNITY_EDITOR
@@ -907,11 +970,12 @@ public class distributer : MonoBehaviour
         UnityEditor.Handles.Label(centerPos, stats, style);
         #endif
     }
+
     private void DrawSpawnedPoints()
     {
         foreach (var point in spawnedPoints)
         {
-            if (point == null) continue;
+            if (point == null) continue; // Added: Null check
             
             Color pointGizmoColor = pointColor;
             
@@ -944,7 +1008,7 @@ public class distributer : MonoBehaviour
     private Vector3 GetOuterCorner(float offsetX, float offsetZ)
     {
         float x = centerOnOrigin
-            ? transform.position.x - plateWidthX * 0.5f + offsetX
+            ? transform.position.x - PlateWidthX * 0.5f + offsetX
             : transform.position.x + offsetX;
         float z = centerOnOrigin
             ? transform.position.z - plateHeightZ * 0.5f + offsetZ
