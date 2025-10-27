@@ -1,0 +1,63 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &4913445776529916812
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 5005016083535240826, guid: e7088ddda91d14dd4846e28651aea7c3, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 3cf475a507ec644c69be2cbc9de5007e, type: 2}
+    - target: {fileID: 6142434080595371285, guid: e7088ddda91d14dd4846e28651aea7c3, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 2.80701
+      objectReference: {fileID: 0}
+    - target: {fileID: 6142434080595371285, guid: e7088ddda91d14dd4846e28651aea7c3, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6142434080595371285, guid: e7088ddda91d14dd4846e28651aea7c3, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.8957
+      objectReference: {fileID: 0}
+    - target: {fileID: 6142434080595371285, guid: e7088ddda91d14dd4846e28651aea7c3, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.00990453
+      objectReference: {fileID: 0}
+    - target: {fileID: 6142434080595371285, guid: e7088ddda91d14dd4846e28651aea7c3, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6142434080595371285, guid: e7088ddda91d14dd4846e28651aea7c3, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6142434080595371285, guid: e7088ddda91d14dd4846e28651aea7c3, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0.99995095
+      objectReference: {fileID: 0}
+    - target: {fileID: 6142434080595371285, guid: e7088ddda91d14dd4846e28651aea7c3, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6142434080595371285, guid: e7088ddda91d14dd4846e28651aea7c3, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6142434080595371285, guid: e7088ddda91d14dd4846e28651aea7c3, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6806522248012480431, guid: e7088ddda91d14dd4846e28651aea7c3, type: 3}
+      propertyPath: m_Name
+      value: galaxy_Red Variant
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: e7088ddda91d14dd4846e28651aea7c3, type: 3}

@@ -1,0 +1,328 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 0}
+  m_Name: CrystalDatabase
+  m_EditorClassIdentifier: Assembly-CSharp::CrystalDatabase
+  categories:
+  - categoryName: Aurora_panel
+    type: 3
+    prefab: {fileID: 4529215864755969007, guid: 6a5cce678c4304af4bdba80c166656f6, type: 3}
+    sharedMaterial: {fileID: 2100000, guid: c43d392fbcc5f664eabcd3e1b1a74b39, type: 2}
+    defaultSprite: {fileID: 21300000, guid: f8a286b13c8424b95ae25262f3391fd8, type: 3}
+    defaultVideoClip: {fileID: 0}
+    variants:
+    - variantName: Red
+      color: {r: 0.9433962, g: 0.031149892, b: 0.031149892, a: 0}
+      icon: {fileID: 21300000, guid: 6944baf6e2bed4460be9f40027d74b65, type: 3}
+      videoClip: {fileID: 32900000, guid: 81b4bc2d8ede14e1fa4cdd257dfd15d9, type: 3}
+    - variantName: Blue
+      color: {r: 0.031372547, g: 0.8999292, b: 0.94509804, a: 0}
+      icon: {fileID: 0}
+      videoClip: {fileID: 0}
+    - variantName: Green
+      color: {r: 0.031372547, g: 0.94509804, b: 0.105947316, a: 0}
+      icon: {fileID: 0}
+      videoClip: {fileID: 0}
+    - variantName: Orange
+      color: {r: 0.94509804, g: 0.6369858, b: 0.031372547, a: 0}
+      icon: {fileID: 0}
+      videoClip: {fileID: 0}
+    - variantName: Magnet
+      color: {r: 0.5497803, g: 0.031372547, b: 0.94509804, a: 0}
+      icon: {fileID: 0}
+      videoClip: {fileID: 0}
+    - variantName: Yellow
+      color: {r: 0.94509804, g: 0.88518476, b: 0.031372547, a: 0}
+      icon: {fileID: 0}
+      videoClip: {fileID: 0}
+    - variantName: Yellow
+      color: {r: 0.94509804, g: 0.88518476, b: 0.031372547, a: 0}
+      icon: {fileID: 0}
+      videoClip: {fileID: 0}
+  - categoryName: Galaxy
+    type: 4
+    prefab: {fileID: 3353862291775987245, guid: d622df05ea07f41559df958ee0938e83, type: 3}
+    sharedMaterial: {fileID: 2100000, guid: c43d392fbcc5f664eabcd3e1b1a74b39, type: 2}
+    defaultSprite: {fileID: 21300000, guid: 09e76ab67c4014fc0905b4e2d00dbfda, type: 3}
+    defaultVideoClip: {fileID: 32900000, guid: 81b4bc2d8ede14e1fa4cdd257dfd15d9, type: 3}
+    variants:
+    - variantName: Red
+      color: {r: 0.9433962, g: 0.031149892, b: 0.031149892, a: 0}
+      icon: {fileID: 21300000, guid: 09e76ab67c4014fc0905b4e2d00dbfda, type: 3}
+      videoClip: {fileID: 32900000, guid: 81b4bc2d8ede14e1fa4cdd257dfd15d9, type: 3}
+    - variantName: Blue
+      color: {r: 0.031372547, g: 0.8999292, b: 0.94509804, a: 0}
+      icon: {fileID: 21300000, guid: cb660168a40d04337a8f24b1bf065f72, type: 3}
+      videoClip: {fileID: 32900000, guid: 46ec4cc7426604347a7e1f65c6e7cee8, type: 3}
+    - variantName: Green
+      color: {r: 0.031372547, g: 0.94509804, b: 0.105947316, a: 0}
+      icon: {fileID: 21300000, guid: f9e93906276df458ca1b7b4c9b9ce28c, type: 3}
+      videoClip: {fileID: 32900000, guid: b88318ff38413433b977fdcf94053005, type: 3}
+    - variantName: Orange
+      color: {r: 0.94509804, g: 0.6369858, b: 0.031372547, a: 0}
+      icon: {fileID: 21300000, guid: 692ff2ce8a9e045acbc457fab211bddd, type: 3}
+      videoClip: {fileID: 32900000, guid: 36e7df4fe9d5747098f58b0353e00ca3, type: 3}
+    - variantName: Magnet
+      color: {r: 0.5497803, g: 0.031372547, b: 0.94509804, a: 0}
+      icon: {fileID: 21300000, guid: b19c57c020f6145da90a9349409afca1, type: 3}
+      videoClip: {fileID: 32900000, guid: 774b6eec9c76d4be18a35505f6468714, type: 3}
+    - variantName: Yellow
+      color: {r: 0.94509804, g: 0.88518476, b: 0.031372547, a: 0}
+      icon: {fileID: 21300000, guid: 034bd5d74eba54cbcb1680bede30ada2, type: 3}
+      videoClip: {fileID: 32900000, guid: 06372f97a412741fc800c887d791812d, type: 3}
+  - categoryName: Aurora_frame
+    type: 5
+    prefab: {fileID: 4827110112485327502, guid: fdf81845ebf9044af98fab8c80e07e7f, type: 3}
+    sharedMaterial: {fileID: 0}
+    defaultSprite: {fileID: 21300000, guid: 034bd5d74eba54cbcb1680bede30ada2, type: 3}
+    defaultVideoClip: {fileID: 0}
+    variants:
+    - variantName: Red
+      color: {r: 0.9433962, g: 0.031149892, b: 0.031149892, a: 0}
+      icon: {fileID: 0}
+      videoClip: {fileID: 0}
+    - variantName: Blue
+      color: {r: 0.031372547, g: 0.8999292, b: 0.94509804, a: 0}
+      icon: {fileID: 0}
+      videoClip: {fileID: 0}
+    - variantName: Green
+      color: {r: 0.031372547, g: 0.94509804, b: 0.105947316, a: 0}
+      icon: {fileID: 0}
+      videoClip: {fileID: 0}
+  - categoryName: Aurora_piller
+    type: 6
+    prefab: {fileID: 6175211427966398605, guid: 19625aaac9d1347f292dcf7098825357, type: 3}
+    sharedMaterial: {fileID: 0}
+    defaultSprite: {fileID: 21300000, guid: f9e93906276df458ca1b7b4c9b9ce28c, type: 3}
+    defaultVideoClip: {fileID: 0}
+    variants:
+    - variantName: Red
+      color: {r: 0.9433962, g: 0.031149892, b: 0.031149892, a: 0}
+      icon: {fileID: 0}
+      videoClip: {fileID: 0}
+    - variantName: Blue
+      color: {r: 0.031372547, g: 0.8999292, b: 0.94509804, a: 0}
+      icon: {fileID: 0}
+      videoClip: {fileID: 0}
+    - variantName: Green
+      color: {r: 0.031372547, g: 0.94509804, b: 0.105947316, a: 0}
+      icon: {fileID: 0}
+      videoClip: {fileID: 0}
+  - categoryName: AzureShell
+    type: 7
+    prefab: {fileID: 644445379806947190, guid: 122fc33a5769f4fdca0e3509f87d3cd9, type: 3}
+    sharedMaterial: {fileID: 0}
+    defaultSprite: {fileID: 21300000, guid: db0383e97c5494584b7192a5a3fb701b, type: 3}
+    defaultVideoClip: {fileID: 0}
+    variants:
+    - variantName: Red
+      color: {r: 0.9433962, g: 0.031149892, b: 0.031149892, a: 0}
+      icon: {fileID: 0}
+      videoClip: {fileID: 0}
+    - variantName: Blue
+      color: {r: 0.031372547, g: 0.8999292, b: 0.94509804, a: 0}
+      icon: {fileID: 0}
+      videoClip: {fileID: 0}
+    - variantName: Green
+      color: {r: 0.031372547, g: 0.94509804, b: 0.105947316, a: 0}
+      icon: {fileID: 0}
+      videoClip: {fileID: 0}
+  - categoryName: Crystal_Bloom
+    type: 8
+    prefab: {fileID: 4705370706436852594, guid: 3dc9adc561aff496e988c0fa75fa8bb7, type: 3}
+    sharedMaterial: {fileID: 0}
+    defaultSprite: {fileID: 0}
+    defaultVideoClip: {fileID: 0}
+    variants:
+    - variantName: Red
+      color: {r: 0.9433962, g: 0.031149892, b: 0.031149892, a: 0}
+      icon: {fileID: 0}
+      videoClip: {fileID: 0}
+    - variantName: Blue
+      color: {r: 0.031372547, g: 0.8999292, b: 0.94509804, a: 0}
+      icon: {fileID: 0}
+      videoClip: {fileID: 0}
+    - variantName: Green
+      color: {r: 0.031372547, g: 0.94509804, b: 0.105947316, a: 0}
+      icon: {fileID: 0}
+      videoClip: {fileID: 0}
+  - categoryName: Cystal_pumpkin
+    type: 9
+    prefab: {fileID: 6021334664881263470, guid: 8e3a2ce6740514a6e83015b40676d629, type: 3}
+    sharedMaterial: {fileID: 0}
+    defaultSprite: {fileID: 0}
+    defaultVideoClip: {fileID: 0}
+    variants:
+    - variantName: Red
+      color: {r: 0.9433962, g: 0.031149892, b: 0.031149892, a: 0}
+      icon: {fileID: 0}
+      videoClip: {fileID: 0}
+    - variantName: Blue
+      color: {r: 0.031372547, g: 0.8999292, b: 0.94509804, a: 0}
+      icon: {fileID: 0}
+      videoClip: {fileID: 0}
+    - variantName: Green
+      color: {r: 0.031372547, g: 0.94509804, b: 0.105947316, a: 0}
+      icon: {fileID: 0}
+      videoClip: {fileID: 0}
+  - categoryName: Crystal_starfish
+    type: 10
+    prefab: {fileID: 2068974088645072493, guid: 87b0fc32df44b44dc9945998bb1d121b, type: 3}
+    sharedMaterial: {fileID: 0}
+    defaultSprite: {fileID: 0}
+    defaultVideoClip: {fileID: 0}
+    variants:
+    - variantName: Red
+      color: {r: 0.9433962, g: 0.031149892, b: 0.031149892, a: 0}
+      icon: {fileID: 0}
+      videoClip: {fileID: 0}
+    - variantName: Blue
+      color: {r: 0.031372547, g: 0.8999292, b: 0.94509804, a: 0}
+      icon: {fileID: 0}
+      videoClip: {fileID: 0}
+    - variantName: Green
+      color: {r: 0.031372547, g: 0.94509804, b: 0.105947316, a: 0}
+      icon: {fileID: 0}
+      videoClip: {fileID: 0}
+  - categoryName: Crystal_Angle
+    type: 11
+    prefab: {fileID: 2398647442130269468, guid: 774ddb227e293471cbae214b8468be7e, type: 3}
+    sharedMaterial: {fileID: 0}
+    defaultSprite: {fileID: 0}
+    defaultVideoClip: {fileID: 0}
+    variants:
+    - variantName: Red
+      color: {r: 0.9433962, g: 0.031149892, b: 0.031149892, a: 0}
+      icon: {fileID: 0}
+      videoClip: {fileID: 0}
+    - variantName: Blue
+      color: {r: 0.031372547, g: 0.8999292, b: 0.94509804, a: 0}
+      icon: {fileID: 0}
+      videoClip: {fileID: 0}
+    - variantName: Green
+      color: {r: 0.031372547, g: 0.94509804, b: 0.105947316, a: 0}
+      icon: {fileID: 0}
+      videoClip: {fileID: 0}
+  - categoryName: Dove_feather
+    type: 12
+    prefab: {fileID: 8151537128496269964, guid: aecf33a3c70c2496bb1c840a98c82abd, type: 3}
+    sharedMaterial: {fileID: 0}
+    defaultSprite: {fileID: 0}
+    defaultVideoClip: {fileID: 0}
+    variants:
+    - variantName: Red
+      color: {r: 0.9433962, g: 0.031149892, b: 0.031149892, a: 0}
+      icon: {fileID: 0}
+      videoClip: {fileID: 0}
+    - variantName: Blue
+      color: {r: 0.031372547, g: 0.8999292, b: 0.94509804, a: 0}
+      icon: {fileID: 0}
+      videoClip: {fileID: 0}
+    - variantName: Green
+      color: {r: 0.031372547, g: 0.94509804, b: 0.105947316, a: 0}
+      icon: {fileID: 0}
+      videoClip: {fileID: 0}
+  - categoryName: FaceDrop
+    type: 13
+    prefab: {fileID: 952417630760024165, guid: d79e70032bc404687b68eba2ba8c462b, type: 3}
+    sharedMaterial: {fileID: 0}
+    defaultSprite: {fileID: 0}
+    defaultVideoClip: {fileID: 0}
+    variants:
+    - variantName: Red
+      color: {r: 0.9433962, g: 0.031149892, b: 0.031149892, a: 0}
+      icon: {fileID: 0}
+      videoClip: {fileID: 0}
+    - variantName: Blue
+      color: {r: 0.031372547, g: 0.8999292, b: 0.94509804, a: 0}
+      icon: {fileID: 0}
+      videoClip: {fileID: 0}
+    - variantName: Green
+      color: {r: 0.031372547, g: 0.94509804, b: 0.105947316, a: 0}
+      icon: {fileID: 0}
+      videoClip: {fileID: 0}
+  - categoryName: Galaxy_stone
+    type: 14
+    prefab: {fileID: 3353862291775987245, guid: d622df05ea07f41559df958ee0938e83, type: 3}
+    sharedMaterial: {fileID: 0}
+    defaultSprite: {fileID: 0}
+    defaultVideoClip: {fileID: 0}
+    variants:
+    - variantName: Red
+      color: {r: 0.9433962, g: 0.031149892, b: 0.031149892, a: 0}
+      icon: {fileID: 0}
+      videoClip: {fileID: 0}
+    - variantName: Blue
+      color: {r: 0.031372547, g: 0.8999292, b: 0.94509804, a: 0}
+      icon: {fileID: 0}
+      videoClip: {fileID: 0}
+    - variantName: Green
+      color: {r: 0.031372547, g: 0.94509804, b: 0.105947316, a: 0}
+      icon: {fileID: 0}
+      videoClip: {fileID: 0}
+  - categoryName: North_start
+    type: 15
+    prefab: {fileID: 5176768629793900437, guid: 61f923cf73d544bfca0ddc4666dd759e, type: 3}
+    sharedMaterial: {fileID: 0}
+    defaultSprite: {fileID: 0}
+    defaultVideoClip: {fileID: 0}
+    variants:
+    - variantName: Red
+      color: {r: 0.9433962, g: 0.031149892, b: 0.031149892, a: 0}
+      icon: {fileID: 0}
+      videoClip: {fileID: 0}
+    - variantName: Blue
+      color: {r: 0.031372547, g: 0.8999292, b: 0.94509804, a: 0}
+      icon: {fileID: 0}
+      videoClip: {fileID: 0}
+    - variantName: Green
+      color: {r: 0.031372547, g: 0.94509804, b: 0.105947316, a: 0}
+      icon: {fileID: 0}
+      videoClip: {fileID: 0}
+  - categoryName: Rock_crystal
+    type: 16
+    prefab: {fileID: 5926961590683882380, guid: d44a056f2cd7c45d6a5656e3225c5d3c, type: 3}
+    sharedMaterial: {fileID: 0}
+    defaultSprite: {fileID: 0}
+    defaultVideoClip: {fileID: 0}
+    variants:
+    - variantName: Red
+      color: {r: 0.9433962, g: 0.031149892, b: 0.031149892, a: 0}
+      icon: {fileID: 0}
+      videoClip: {fileID: 0}
+    - variantName: Blue
+      color: {r: 0.031372547, g: 0.8999292, b: 0.94509804, a: 0}
+      icon: {fileID: 0}
+      videoClip: {fileID: 0}
+    - variantName: Green
+      color: {r: 0.031372547, g: 0.94509804, b: 0.105947316, a: 0}
+      icon: {fileID: 0}
+      videoClip: {fileID: 0}
+  - categoryName: WhireWind
+    type: 17
+    prefab: {fileID: 4137837579470874281, guid: 023dfff1a41194e67a87d65ff942f641, type: 3}
+    sharedMaterial: {fileID: 0}
+    defaultSprite: {fileID: 0}
+    defaultVideoClip: {fileID: 0}
+    variants:
+    - variantName: Red
+      color: {r: 0.9433962, g: 0.031149892, b: 0.031149892, a: 0}
+      icon: {fileID: 0}
+      videoClip: {fileID: 0}
+    - variantName: Blue
+      color: {r: 0.031372547, g: 0.8999292, b: 0.94509804, a: 0}
+      icon: {fileID: 0}
+      videoClip: {fileID: 0}
+    - variantName: Green
+      color: {r: 0.031372547, g: 0.94509804, b: 0.105947316, a: 0}
+      icon: {fileID: 0}
+      videoClip: {fileID: 0}

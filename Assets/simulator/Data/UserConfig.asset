@@ -12,10 +12,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f12001c0408b041d688d6e8eba2ab896, type: 3}
   m_Name: UserConfig
   m_EditorClassIdentifier: Assembly-CSharp::UserConfig
-  xSize: 2
-  ySize: 3
-  crystalPrefab: {fileID: 0}
-  crystalColor: {r: 1, g: 1, b: 1, a: 1}
-  crystalType: 0
+  xSize: 4
+  ySize: 4
+  zSize: 1
+  crystalDatabase: {fileID: 11400000, guid: 7f5cd982c57904cd0996e42d846bd6c6, type: 2}
+  hangerSurface: 6
+  BaseType: 0
+  crystalSelections:
+  - enabled: 1
+    crystalType: 7
+    variantIndex: 0
+    spawnWeight: 1
+  - enabled: 1
+    crystalType: 4
+    variantIndex: 0
+    spawnWeight: 1
+  - enabled: 1
+    crystalType: 4
+    variantIndex: 1
+    spawnWeight: 1
+  - enabled: 1
+    crystalType: 4
+    variantIndex: 2
+    spawnWeight: 1
   configurationName: Default Box
   crystalsPerSquareMeter: 16

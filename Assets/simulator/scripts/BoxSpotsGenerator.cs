@@ -5,6 +5,12 @@ using System.Collections.Generic;
 using UnityEditor;
 #endif
 
+public enum ShapeType
+{
+    Box,
+    Cylinder
+}
+
 [ExecuteInEditMode]
 public class BoxSpotsGenerator : MonoBehaviour
 {
@@ -12,11 +18,23 @@ public class BoxSpotsGenerator : MonoBehaviour
     [Header("Configuration")]
     public UserConfig config;
 
+    [Header("Shape Configuration")]
+    [Tooltip("Choose between box or cylinder base")]
+    public ShapeType shapeType;
+
+    [Header("Box/Cylinder Dimensions (meters) — Z locked to 1")]
+
     [Header("Box Dimensions (meters) — Z locked to 1")]
     public float xSize = 1f;
     public float ySize = 1f;
     [Tooltip("Always forced to 1m height. Shown for clarity.")]
     public float zSize = 1f;
+
+    [Tooltip("Cylinder radius (auto-calculated from box dimensions or manual)")]
+    public float cylinderRadius = 0.5f;
+
+    [Tooltip("Auto-calculate radius to fit box dimensions")]
+    public bool autoCalculateRadius = true;
 
     [Header("Spot Distribution")]
     [Tooltip("Base density: spots per square meter")]
@@ -107,6 +125,16 @@ public class BoxSpotsGenerator : MonoBehaviour
         zSize = 1f;
         xSize = Mathf.Max(0.01f, xSize);
         ySize = Mathf.Max(0.01f, ySize);
+        shapeType = config.BaseType;
+        
+        // Auto-calculate cylinder radius to fit in box dimensions
+        if (shapeType == ShapeType.Cylinder && autoCalculateRadius)
+        {
+            // Use the smaller dimension to ensure cylinder fits
+            cylinderRadius = Mathf.Min(xSize, ySize) * 0.5f;
+        }
+        cylinderRadius = Mathf.Max(0.01f, cylinderRadius);
+
         spotHeightFromBottom = Mathf.Clamp(spotHeightFromBottom, 0f, zSize - 0.001f);
         paddingX = Mathf.Clamp(paddingX, 0f, xSize * 0.49f);
         paddingY = Mathf.Clamp(paddingY, 0f, ySize * 0.49f);
@@ -122,13 +150,21 @@ public class BoxSpotsGenerator : MonoBehaviour
         xSize = config.xSize;
         ySize = config.ySize;
 
-        if (!autoRegenerate)
-            Generate();
+        // if (!autoRegenerate)
+           // Generate();
+    }
+
+    public void SetShapeType()
+    {
+        shapeType = config.BaseType;
     }
 
     [ContextMenu("Regenerate")]
     public void Generate()
     {
+        xSize = config.xSize;
+        ySize = config.ySize;
+        
         if (useSeed)
             Random.InitState(randomSeed);
 
@@ -144,48 +180,80 @@ public class BoxSpotsGenerator : MonoBehaviour
         spotPositions.Clear();
     }
 
-    private void CreateBox()
+private void CreateBox()
+{
+    GameObject primitive;
+    
+    if (shapeType == ShapeType.Cylinder)
     {
-        boxObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
-        boxObject.name = "Generated_Box";
-        boxObject.transform.SetParent(transform, false);
-        boxObject.transform.localScale = new Vector3(xSize, zSize, ySize);
-
+        primitive = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+        primitive.name = "Generated_Cylinder";
+        primitive.transform.SetParent(transform, false);
+        
+        // Cylinder: diameter = 2*radius, height = zSize
+        float diameter = cylinderRadius * 2f;
+        primitive.transform.localScale = new Vector3(diameter, zSize * 0.5f, diameter);
+        
         float halfHeight = zSize * 0.5f;
-        boxObject.transform.localPosition = boxOffset + new Vector3(0, halfHeight, 0);
+        primitive.transform.localPosition = boxOffset + new Vector3(0, halfHeight, 0);
+    }
+    else // Box
+    {
+        primitive = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        primitive.name = "Generated_Box";
+        primitive.transform.SetParent(transform, false);
+        primitive.transform.localScale = new Vector3(xSize, zSize, ySize);
+        
+        float halfHeight = zSize * 0.5f;
+        primitive.transform.localPosition = boxOffset + new Vector3(0, halfHeight, 0);
+    }
 
-        // Remove collider
-        var boxCol = boxObject.GetComponent<Collider>();
-        if (boxCol) DestroyImmediate(boxCol);
+    boxObject = primitive;
 
-        // Apply material and color
-        var renderer = boxObject.GetComponent<Renderer>();
-        if (renderer)
+    // Remove collider
+    var boxCol = boxObject.GetComponent<Collider>();
+    if (boxCol) DestroyImmediate(boxCol);
+
+    // Apply material and color
+    var renderer = boxObject.GetComponent<Renderer>();
+    if (renderer)
+    {
+        if (boxMaterial != null)
         {
-            if (boxMaterial != null)
-            {
-                renderer.sharedMaterial = boxMaterial;
-            }
-            else if (transparentBox)
-            {
-                Material mat = new Material(Shader.Find("Standard"));
-                mat.SetFloat("_Mode", 3); // Transparent mode
-                mat.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
-                mat.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
-                mat.SetInt("_ZWrite", 0);
-                mat.DisableKeyword("_ALPHATEST_ON");
-                mat.EnableKeyword("_ALPHABLEND_ON");
-                mat.DisableKeyword("_ALPHAPREMULTIPLY_ON");
-                mat.renderQueue = 3000;
-                mat.color = boxColor;
-                renderer.sharedMaterial = mat;
-            }
+            renderer.sharedMaterial = boxMaterial;
+        }
+        else if (transparentBox)
+        {
+            Material mat = new Material(Shader.Find("Standard"));
+            mat.SetFloat("_Mode", 3);
+            mat.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
+            mat.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+            mat.SetInt("_ZWrite", 0);
+            mat.DisableKeyword("_ALPHATEST_ON");
+            mat.EnableKeyword("_ALPHABLEND_ON");
+            mat.DisableKeyword("_ALPHAPREMULTIPLY_ON");
+            mat.renderQueue = 3000;
+            mat.color = boxColor;
+            renderer.sharedMaterial = mat;
         }
     }
+}
 
     private void CreateSpots()
     {
-        float area = xSize * ySize;
+        float area;
+        
+        if (shapeType == ShapeType.Cylinder)
+        {
+            // Area of circle
+            area = Mathf.PI * cylinderRadius * cylinderRadius;
+        }
+        else
+        {
+            // Area of rectangle
+            area = xSize * ySize;
+        }
+        
         int targetCount = Mathf.RoundToInt(baseSpotsPerSquareMeter * area);
 
         spotsParent = new GameObject("Spots_Bottom");
@@ -210,8 +278,10 @@ public class BoxSpotsGenerator : MonoBehaviour
                 break;
         }
 
-        Debug.Log($"[BoxSpotGenerator] Box {xSize:F2}×{ySize:F2}×1m — {spotPositions.Count} spots using {pattern} pattern");
+        string shapeName = shapeType == ShapeType.Cylinder ? "Cylinder" : "Box";
+        Debug.Log($"[BoxSpotGenerator] {shapeName} {xSize:F2}×{ySize:F2}×1m — {spotPositions.Count} spots using {pattern} pattern");
     }
+
 
     private void GenerateGridPattern(int targetCount)
     {
@@ -349,14 +419,25 @@ public class BoxSpotsGenerator : MonoBehaviour
         return false;
     }
 
+    private bool IsInsideCylinder(Vector3 pos)
+    {
+        if (shapeType != ShapeType.Cylinder) return true;
+        
+        float effectiveRadius = cylinderRadius - paddingX; // Use paddingX for radial padding
+        float distanceFromCenter = Mathf.Sqrt(pos.x * pos.x + pos.z * pos.z);
+        return distanceFromCenter <= effectiveRadius;
+    }
     private void CreateSpotAtPosition(Vector3 localPos, int index)
     {
+        // Check if position is valid for cylinder
+        if (!IsInsideCylinder(localPos))
+            return;
+        
         GameObject spotGO = CreateSpot();
         spotGO.name = $"Spot_{index + 1}";
         spotGO.transform.SetParent(spotsParent.transform, false);
 
         Vector3 finalPos = localPos + boxOffset;
-
         spotGO.transform.localPosition = finalPos;
 
         float scale = spotScale;
@@ -464,20 +545,61 @@ public class BoxSpotsGenerator : MonoBehaviour
     {
         if (!showGizmos) return;
 
-        Gizmos.color = Color.yellow;
         Vector3 center = transform.position + boxOffset + Vector3.up * zSize * 0.5f;
-        Gizmos.DrawWireCube(center, new Vector3(xSize, zSize, ySize));
-
-        Gizmos.color = Color.green;
-        float minX = -xSize * 0.5f + paddingX;
-        float maxX = xSize * 0.5f - paddingX;
-        float minZ = -ySize * 0.5f + paddingY;
-        float maxZ = ySize * 0.5f - paddingY;
         
-        Vector3 paddedCenter = transform.position + boxOffset + Vector3.up * (spotHeightFromBottom + boxOffset.y);
-        Gizmos.DrawWireCube(paddedCenter, new Vector3(maxX - minX, 0.01f, maxZ - minZ));
+        if (shapeType == ShapeType.Cylinder)
+        {
+            Gizmos.color = Color.yellow;
+            DrawWireCylinder(center, cylinderRadius, zSize);
+            
+            Gizmos.color = Color.green;
+            float innerRadius = cylinderRadius - paddingX;
+            DrawWireCircle(transform.position + boxOffset + Vector3.up * spotHeightFromBottom, innerRadius);
+        }
+        else
+        {
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawWireCube(center, new Vector3(xSize, zSize, ySize));
+
+            Gizmos.color = Color.green;
+            float minX = -xSize * 0.5f + paddingX;
+            float maxX = xSize * 0.5f - paddingX;
+            float minZ = -ySize * 0.5f + paddingY;
+            float maxZ = ySize * 0.5f - paddingY;
+            
+            Vector3 paddedCenter = transform.position + boxOffset + Vector3.up * (spotHeightFromBottom + boxOffset.y);
+            Gizmos.DrawWireCube(paddedCenter, new Vector3(maxX - minX, 0.01f, maxZ - minZ));
+        }
     }
 
+private void DrawWireCylinder(Vector3 center, float radius, float height)
+{
+    DrawWireCircle(center + Vector3.up * height * 0.5f, radius);
+    DrawWireCircle(center - Vector3.up * height * 0.5f, radius);
+    
+    // Draw vertical lines
+    for (int i = 0; i < 8; i++)
+    {
+        float angle = i * Mathf.PI * 2f / 8f;
+        Vector3 offset = new Vector3(Mathf.Cos(angle) * radius, 0, Mathf.Sin(angle) * radius);
+        Gizmos.DrawLine(center + offset + Vector3.up * height * 0.5f, 
+                       center + offset - Vector3.up * height * 0.5f);
+    }
+}
+
+private void DrawWireCircle(Vector3 center, float radius, int segments = 32)
+{
+    float angleStep = 360f / segments;
+    Vector3 prevPoint = center + new Vector3(radius, 0, 0);
+    
+    for (int i = 1; i <= segments; i++)
+    {
+        float angle = i * angleStep * Mathf.Deg2Rad;
+        Vector3 newPoint = center + new Vector3(Mathf.Cos(angle) * radius, 0, Mathf.Sin(angle) * radius);
+        Gizmos.DrawLine(prevPoint, newPoint);
+        prevPoint = newPoint;
+    }
+}
     [ContextMenu("Clear All")]
     public void ClearAll()
     {
@@ -501,6 +623,11 @@ public class BoxSpotsGeneratorEditor : Editor
         BoxSpotsGenerator generator = (BoxSpotsGenerator)target;
 
         EditorGUILayout.Space();
+        float area = generator.shapeType == ShapeType.Cylinder 
+        ? Mathf.PI * generator.cylinderRadius * generator.cylinderRadius 
+        : generator.xSize * generator.ySize;
+        EditorGUILayout.HelpBox($"Estimated spots: {Mathf.RoundToInt(generator.baseSpotsPerSquareMeter * area)}", MessageType.Info);
+
         EditorGUILayout.LabelField("Quick Actions", EditorStyles.boldLabel);
 
         EditorGUILayout.BeginHorizontal();
