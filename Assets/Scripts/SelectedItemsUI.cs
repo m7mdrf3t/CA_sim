@@ -6,7 +6,7 @@ using TMPro;
 public class SelectedItemsUI : MonoBehaviour
 {
     [Header("Data source")]
-    [SerializeField] private GalleryVideoController gallery;  // reference to the gallery controller
+    [SerializeField] private GalleryVideoController gallery;
 
     [Tooltip("Clip names shown in the list (same order as GalleryVideoController.clips).")]
     [SerializeField] private string[] crystalNames;
@@ -15,16 +15,15 @@ public class SelectedItemsUI : MonoBehaviour
     [SerializeField] private Sprite[] crystalIcons;
 
     [Header("UI Wiring")]
-    [SerializeField] private Button selectButton;               // your big 'Select' button
-    [SerializeField] private Transform listParent;              // Selected_Items (the container)
-    [SerializeField] private GameObject itemPrefab;             // your Item_0 prefab
-    [SerializeField] private TextMeshProUGUI counterLabel;      // 'Selected 0/4'
+    [SerializeField] private Button selectButton;
+    [SerializeField] private Transform listParent;
+    [SerializeField] private GameObject itemPrefab;
+    [SerializeField] private TextMeshProUGUI counterLabel;
 
     [Header("Rules")]
     [SerializeField] private int maxSelections = 4;
     [SerializeField] private bool preventDuplicates = true;
 
-    // internal state
     private readonly List<int> selectedIndices = new List<int>();
 
     private void Awake()
@@ -49,10 +48,10 @@ public class SelectedItemsUI : MonoBehaviour
             return;
         }
 
-        int idx = gallery.CurrentIndex;
+        int idx = gallery.ResolveCurrentIndex(); // ✅ always valid now
         if (idx < 0)
         {
-            Debug.LogWarning("[SelectedItemsUI] No current gallery index (maybe external clip).");
+            Debug.LogWarning("[SelectedItemsUI] No current or last gallery index found.");
             return;
         }
 
@@ -68,20 +67,11 @@ public class SelectedItemsUI : MonoBehaviour
             return;
         }
 
-        // Display data
         string name = SafeName(idx);
+        Sprite icon = SafeIcon(idx) ?? gallery.GetButtonSprite(idx);
 
-        // Prefer explicit array; if null, use gallery button sprite
-        Sprite icon = SafeIcon(idx);
-        if (icon == null)
-        {
-            icon = gallery.GetButtonSprite(idx);
-        }
-
-        // Instantiate row
         GameObject row = Instantiate(itemPrefab, listParent);
 
-        // Fill icon (supports Image or RawImage) + text
         var iconObj = row.transform.Find("Crystal_Icon");
         if (iconObj != null)
         {
@@ -101,32 +91,59 @@ public class SelectedItemsUI : MonoBehaviour
                     raw.SetNativeSize();
                 }
             }
-            else
-            {
-                Debug.LogWarning("[SelectedItemsUI] 'Crystal_Icon' needs an Image or RawImage.");
-            }
-        }
-        else
-        {
-            Debug.LogWarning("[SelectedItemsUI] Could not find 'Crystal_Icon' under the item prefab.");
         }
 
         var nameText = row.transform.Find("Text (TMP)")?.GetComponent<TextMeshProUGUI>();
         if (nameText != null) nameText.text = name;
 
-        // Wire X to remove
         var xBtn = row.transform.Find("X")?.GetComponent<Button>();
         if (xBtn != null)
         {
             xBtn.onClick.AddListener(() =>
             {
+                int listIndex = selectedIndices.IndexOf(idx);
                 selectedIndices.Remove(idx);
+                
+                // Sync with SelectionBus
+                if (listIndex >= 0 && listIndex < SelectionBus.SelectedCrystalIndices.Count)
+                {
+                    SelectionBus.SelectedCrystalIndices.RemoveAt(listIndex);
+                    if (listIndex < SelectionBus.SelectedCrystalSprites.Count)
+                        SelectionBus.SelectedCrystalSprites.RemoveAt(listIndex);
+                    if (listIndex < SelectionBus.SelectedCrystalNames.Count)
+                        SelectionBus.SelectedCrystalNames.RemoveAt(listIndex);
+                }
+                
+                // Save to persistent storage
+                SelectionBus.SaveSelections();
+                
                 Destroy(row);
                 UpdateCounter();
             });
         }
 
         selectedIndices.Add(idx);
+        
+        // Clear first to avoid accumulation
+        // This ensures we only save the currently selected items
+        SelectionBus.SelectedCrystalIndices.Clear();
+        SelectionBus.SelectedCrystalSprites.Clear();
+        SelectionBus.SelectedCrystalNames.Clear();
+        
+        // Rebuild the lists from current selections
+        foreach (int selectionIdx in selectedIndices)
+        {
+            string selName = SafeName(selectionIdx);
+            Sprite selIcon = SafeIcon(selectionIdx) ?? gallery.GetButtonSprite(selectionIdx);
+            
+            SelectionBus.SelectedCrystalIndices.Add(selectionIdx);
+            SelectionBus.SelectedCrystalSprites.Add(selIcon);
+            SelectionBus.SelectedCrystalNames.Add(selName);
+        }
+        
+        // Save to persistent storage
+        SelectionBus.SaveSelections();
+        
         UpdateCounter();
     }
 
@@ -135,7 +152,6 @@ public class SelectedItemsUI : MonoBehaviour
         if (crystalNames != null && index >= 0 && index < crystalNames.Length && !string.IsNullOrEmpty(crystalNames[index]))
             return crystalNames[index];
 
-        // Fallback to gallery clip name
         string clipName = gallery != null ? gallery.GetClipName(index) : null;
         if (!string.IsNullOrEmpty(clipName)) return clipName;
 
@@ -153,5 +169,12 @@ public class SelectedItemsUI : MonoBehaviour
     {
         if (counterLabel != null)
             counterLabel.text = $"Selected {selectedIndices.Count}/{maxSelections}";
+
+        OnSelectionCountChanged?.Invoke(selectedIndices.Count);
     }
+
+    // 🔹 Accessors & events
+    public int SelectionCount => selectedIndices.Count;
+    public IReadOnlyList<int> SelectedIndices => selectedIndices;
+    public event System.Action<int> OnSelectionCountChanged;
 }

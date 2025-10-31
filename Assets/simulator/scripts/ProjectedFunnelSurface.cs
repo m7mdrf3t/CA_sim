@@ -453,7 +453,7 @@ public class ProjectedFunnelSurface : HangerSurface
         if (density < 0.15f) return 0f;
 
         // Modulate final length
-        return tHit * Mathf.Clamp01(density);
+        return ApplyHeightOffset(tHit * Mathf.Clamp01(density));
     }
 
     // ---------------- Gizmos ----------------

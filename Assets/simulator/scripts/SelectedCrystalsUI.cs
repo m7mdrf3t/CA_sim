@@ -15,10 +15,15 @@ public class SelectedCrystalsUI : MonoBehaviour
     [SerializeField] private Transform selectedContainer;
     [SerializeField] private GameObject selectedItemPrefab;
     
+
+
     void Start()
     {
+        ConfigurationManager.Instance.ClearAllSelections();
         RefreshList();
     }
+
+    
     
     /// <summary>
     /// Refresh the list of selected crystals
@@ -79,6 +84,7 @@ public class SelectedCrystalsUI : MonoBehaviour
                 });
             }
         }
+   
     }
     
     /// <summary>

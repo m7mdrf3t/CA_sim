@@ -1,4 +1,10 @@
+// ============================================
+// FILE 3: CrystalVariantUIBuilder.cs (Modified)
+// Your existing script with slider integration
+// ============================================
+
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 #if TMP_PRESENT
@@ -9,20 +15,27 @@ public class CrystalVariantUIBuilder : MonoBehaviour
 {
     [Header("Data / Config")]
     [SerializeField] private UserConfig config;
+    [SerializeField] private CrystalDataManager crystalDataManager;
 
     [Header("UI Targets")]
     [SerializeField] private RectTransform buttonParent;     // Where to spawn the buttons
-    [SerializeField] private Button buttonPrefab;            // (Optional) Prefab with an Image named "Icon" and a Text/TMP named "Label"
+    [SerializeField] private Button buttonPrefab;            // Prefab should have ProportionalSlider component!
+
+    [SerializeField] private Vector2 iconSize = new Vector2(120, 120);
+
+    [Header("Slider Manager")]
+    [SerializeField] private ProportionalSliderManager sliderManager; // The manager component
 
     [Header("Options")]
-    [SerializeField] private bool clearExisting = true;      // Clear existing children before building
-    [SerializeField] private Sprite fallbackIcon;            // Used if data.icon is null
-    [SerializeField] private bool ensureLayout = true;       // Adds a GridLayoutGroup if none present
+    [SerializeField] private bool clearExisting = true;
+    [SerializeField] private Sprite fallbackIcon;
+    [SerializeField] private bool ensureLayout = true;
 
-    /// <summary>
-    /// Call this to (re)build all variant buttons.
-    /// </summary>
-    /// 
+    private void Start()
+    {
+        BuildVariantButtons();
+    }
+
     [ContextMenu("Build Variant Buttons")]
     public void BuildVariantButtons()
     {
@@ -38,28 +51,10 @@ public class CrystalVariantUIBuilder : MonoBehaviour
             return;
         }
 
-        // Optional: clear old children
+        // Clear old children
         if (clearExisting)
         {
-            for (int i = buttonParent.childCount - 1; i >= 0; i--)
-            {
-                var child = buttonParent.GetChild(i);
-#if UNITY_EDITOR
-                if (Application.isPlaying) Destroy(child.gameObject);
-                else DestroyImmediate(child.gameObject);
-#else
-                Destroy(child.gameObject);
-#endif
-            }
-        }
-
-        // Optional: make sure the parent has a layout so things look neat
-        if (ensureLayout && buttonParent.GetComponent<LayoutGroup>() == null)
-        {
-            var grid = buttonParent.gameObject.AddComponent<GridLayoutGroup>();
-            grid.cellSize = new Vector2(120, 120);
-            grid.spacing = new Vector2(8, 8);
-            grid.childAlignment = TextAnchor.UpperLeft;
+            ClearChildren(buttonParent);
         }
 
         // Load the data
@@ -69,35 +64,37 @@ public class CrystalVariantUIBuilder : MonoBehaviour
         foreach (var data in variants)
         {
             CreateOneButton(data);
+
+            crystalDataManager.SetCrystalColor(0, data.color.ToString());
+            crystalDataManager.SetSelectedCrystal(0, data.variantName);
         }
     }
 
     private void CreateOneButton(UserConfig.CrystalSpawnData data)
     {
-        // 1) Create or use prefab
+        // Instantiate the button prefab (which includes slider)
         Button btnInstance = buttonPrefab != null
             ? Instantiate(buttonPrefab, buttonParent)
             : CreateRuntimeButton(buttonParent);
 
         btnInstance.gameObject.name = $"CrystalBtn_{data.variantName}";
 
-        // 2) Hook up the icon
+        // Hook up icon
         Image iconImg = null;
-
-        // Preferred: a child explicitly named "Icon"
         var iconTr = btnInstance.transform.Find("Icon");
         if (iconTr != null) iconImg = iconTr.GetComponent<Image>();
 
-        // Fallback: first Image under the button that is not the background
         if (iconImg == null)
         {
             foreach (var img in btnInstance.GetComponentsInChildren<Image>(true))
             {
-                if (img.gameObject == btnInstance.gameObject) continue; // likely background
+                if (img.gameObject == btnInstance.gameObject) continue;
                 iconImg = img;
                 break;
             }
         }
+
+
 
         if (iconImg != null)
         {
@@ -106,42 +103,71 @@ public class CrystalVariantUIBuilder : MonoBehaviour
             iconImg.preserveAspect = true;
         }
 
-        // 3) Hook up the label
-#if TMP_PRESENT
-        TMP_Text label = null;
-        var labelTr = btnInstance.transform.Find("Label");
-        if (labelTr != null) label = labelTr.GetComponent<TMP_Text>();
-        if (label == null) label = btnInstance.GetComponentInChildren<TMP_Text>(true);
-        if (label != null) label.text = data.varientName ?? "Unnamed";
-#else
-        Text label = null;
-        var labelTr = btnInstance.transform.Find("Label");
-        if (labelTr != null) label = labelTr.GetComponent<Text>();
-        if (label == null) label = btnInstance.GetComponentInChildren<Text>(true);
-        if (label != null) label.text = data.variantName ?? "Unnamed";
-#endif
+        TMP_Text nameValueLable = null;
+        var nameValueLableTr = btnInstance.GetComponentInChildren<TMP_Text>(true); ; 
+        nameValueLableTr.text = data.crystalType.ToString() ?? "Unnamed";
 
-        // 4) Wire up click
+
+        // Hook up slider (ProportionalSlider component on the prefab)
+        ProportionalSlider propSlider = btnInstance.GetComponent<ProportionalSlider>();
+        if (propSlider == null)
+        {
+            propSlider = btnInstance.GetComponentInChildren<ProportionalSlider>();
+        }
+
+        if (propSlider != null && sliderManager != null)
+        {
+            sliderManager.RegisterSlider(propSlider, data.variantName, data.color);
+        }
+        else if (sliderManager == null)
+        {
+            Debug.LogWarning("[CrystalVariantUIBuilder] SliderManager is null. Assign it in the inspector!");
+        }
+        else
+        {
+            Debug.LogWarning($"[CrystalVariantUIBuilder] Button prefab for {data.variantName} doesn't have ProportionalSlider component!");
+        }
+
+        // Wire up click
         btnInstance.onClick.RemoveAllListeners();
         btnInstance.onClick.AddListener(() => OnCrystalVariantClicked(data));
     }
 
     private void OnCrystalVariantClicked(UserConfig.CrystalSpawnData data)
     {
-        // Do whatever you want when a variant is chosen
-        // Example: log + call your existing creation flow
         Debug.Log($"[CrystalVariantUIBuilder] Selected variant: {data.variantName}");
-        // You can invoke your CreateEndWeight or another handler here if needed.
-        // e.g. SomeOtherComponent.SpawnFromVariant(data);
+        
+        // You can get the current ratios here
+        if (sliderManager != null)
+        {
+            var ratios = sliderManager.GetCrystalRatios();
+            if (ratios.ContainsKey(data.variantName))
+            {
+                Debug.Log($"Current spawn ratio for {data.variantName}: {ratios[data.variantName]}%");
+            }
+        }
+    }
+
+    private void ClearChildren(RectTransform parent)
+    {
+        for (int i = parent.childCount - 1; i >= 0; i--)
+        {
+            var child = parent.GetChild(i);
+#if UNITY_EDITOR
+            if (Application.isPlaying) Destroy(child.gameObject);
+            else DestroyImmediate(child.gameObject);
+#else
+            Destroy(child.gameObject);
+#endif
+        }
     }
 
     private Button CreateRuntimeButton(RectTransform parent)
     {
-        // Background
         var go = new GameObject("Button", typeof(RectTransform), typeof(Image), typeof(Button));
         var rt = go.GetComponent<RectTransform>();
         rt.SetParent(parent, false);
-        rt.sizeDelta = new Vector2(120, 120);
+        rt.sizeDelta = iconSize;
 
         var bg = go.GetComponent<Image>();
         bg.raycastTarget = true;
@@ -151,7 +177,6 @@ public class CrystalVariantUIBuilder : MonoBehaviour
         colors.fadeDuration = 0.05f;
         button.colors = colors;
 
-        // Icon
         var iconGO = new GameObject("Icon", typeof(RectTransform), typeof(Image));
         var iconRT = iconGO.GetComponent<RectTransform>();
         iconRT.SetParent(rt, false);
@@ -159,7 +184,6 @@ public class CrystalVariantUIBuilder : MonoBehaviour
         iconRT.anchorMax = new Vector2(0.85f, 0.95f);
         iconRT.offsetMin = iconRT.offsetMax = Vector2.zero;
 
-        // Label
 #if TMP_PRESENT
         var labelGO = new GameObject("Label", typeof(RectTransform), typeof(TextMeshProUGUI));
         var tmp = labelGO.GetComponent<TextMeshProUGUI>();
@@ -182,5 +206,25 @@ public class CrystalVariantUIBuilder : MonoBehaviour
         labelRT.offsetMin = labelRT.offsetMax = Vector2.zero;
 
         return button;
+    }
+
+    // Public method to get spawn ratios (use this in your crystal spawning code)
+    public Dictionary<string, float> GetCrystalSpawnRatios()
+    {
+        if (sliderManager != null)
+        {
+            return sliderManager.GetNormalizedRatios();
+        }
+        return new Dictionary<string, float>();
+    }
+
+    // Public method to select random crystal based on ratios
+    public string SelectRandomCrystalVariant()
+    {
+        if (sliderManager != null)
+        {
+            return sliderManager.SelectRandomCrystalVariant();
+        }
+        return null;
     }
 }

@@ -1,0 +1,55 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f12001c0408b041d688d6e8eba2ab896, type: 3}
+  m_Name: UserConfig
+  m_EditorClassIdentifier: Assembly-CSharp::UserConfig
+  clientName: mm0
+  clientEmail: 
+  xSize: 1
+  ySize: 1
+  zSize: 1
+  area: 1
+  BeadsHight: 1
+  totalSpots: 14
+  totalPoints: 120
+  finalPrice: 43800
+  densityLevel: 2
+  colorStyle: 1
+  highDensity: 120
+  mediumDensity: 90
+  lowDensity: 45
+  density: 100
+  showBeads: 1
+  beadCost: 540
+  WithBase: 1
+  mirrorCost: 20000
+  crystalDatabase: {fileID: 11400000, guid: 31fb66fdc23b94854a02a703b895b368, type: 2}
+  GallaryIndex: 1
+  hangerSurface: 6
+  BaseType: 0
+  crystalSelections:
+  - mainTypes: 1
+    enabled: 1
+    crystalType: 23
+    variantIndex: 4
+    spawnWeight: 0.5
+    spawnRatio: 50
+    price: 515
+  - mainTypes: 1
+    enabled: 1
+    crystalType: 17
+    variantIndex: 0
+    spawnWeight: 0.5
+    spawnRatio: 50
+    price: 489
+  configurationName: Default Box
+  crystalsPerSquareMeter: 16

@@ -22,6 +22,8 @@ public class SaveUserDataDim : MonoBehaviour
             return;
         }
 
+        Debug.Log("Saving input values to UserConfig...");
+
         if (float.TryParse(inputX.text, out float parsedX) &&
             float.TryParse(inputY.text, out float parsedY) && 
             float.TryParse(inputZ.text, out float parsedZ))

@@ -5,13 +5,13 @@ using System.Collections.Generic;
 using UnityEditor;
 #endif
 
+[System.Serializable]
 public enum ShapeType
 {
     Box,
     Cylinder
 }
 
-[ExecuteInEditMode]
 public class BoxSpotsGenerator : MonoBehaviour
 {
 
@@ -140,7 +140,7 @@ public class BoxSpotsGenerator : MonoBehaviour
         paddingY = Mathf.Clamp(paddingY, 0f, ySize * 0.49f);
         baseSpotsPerSquareMeter = Mathf.Max(1, baseSpotsPerSquareMeter);
         spotScale = Mathf.Max(0.001f, spotScale);
-
+        shapeType = config.BaseType;
         if (autoRegenerate)
             Generate();
     }
@@ -149,7 +149,7 @@ public class BoxSpotsGenerator : MonoBehaviour
     {
         xSize = config.xSize;
         ySize = config.ySize;
-
+        shapeType = config.BaseType;    
         // if (!autoRegenerate)
            // Generate();
     }
@@ -164,10 +164,24 @@ public class BoxSpotsGenerator : MonoBehaviour
     {
         xSize = config.xSize;
         ySize = config.ySize;
-        
+        shapeType = config.BaseType;   
         if (useSeed)
             Random.InitState(randomSeed);
 
+        CleanupPrevious();
+        CreateBox();
+        CreateSpots();
+    }
+
+
+     public void GenerateRuntime()
+    {
+        xSize = config.xSize;
+        ySize = config.ySize;
+        
+        if (useSeed)
+            Random.InitState(randomSeed);
+        SetShapeType();
         CleanupPrevious();
         CreateBox();
         CreateSpots();
@@ -184,6 +198,8 @@ private void CreateBox()
 {
     GameObject primitive;
     
+    cylinderRadius = Mathf.Min(xSize, ySize) * 0.5f;
+
     if (shapeType == ShapeType.Cylinder)
     {
         primitive = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
@@ -192,7 +208,7 @@ private void CreateBox()
         
         // Cylinder: diameter = 2*radius, height = zSize
         float diameter = cylinderRadius * 2f;
-        primitive.transform.localScale = new Vector3(diameter, zSize * 0.5f, diameter);
+        primitive.transform.localScale = new Vector3(diameter, 0.3f, diameter);
         
         float halfHeight = zSize * 0.5f;
         primitive.transform.localPosition = boxOffset + new Vector3(0, halfHeight, 0);

@@ -93,7 +93,7 @@ public class ProjectedDoubleSphereSurface : HangerSurface
         if (tTop >= 0f) t = tTop;
         if (tBot >= 0f && (t < 0f || tBot < t)) t = tBot;
 
-        return t > 0f ? t : 0f;
+        return ApplyHeightOffset(t > 0f ? t : 0f);
     }
 
     public override void DrawGizmos(IEnumerable<PointData> points, Transform relativeTo)

@@ -15,6 +15,8 @@ namespace Simulator.Scripts
         [SerializeField] private string sharedSecret = "AsfourCG+";
 
         [Header("UI - Text Inputs (assign one type per field)")]
+
+        [SerializeField] private UserConfig userConfig;
         [SerializeField] private TMP_InputField nameTMP;
         [SerializeField] private TMP_InputField emailTMP;
         [SerializeField] private TMP_InputField phoneTMP;
@@ -24,11 +26,11 @@ namespace Simulator.Scripts
         [SerializeField] private InputField phoneUGUI;
 
         [Header("UI - Dropdowns (assign one type per field)")]
-        [SerializeField] private TMP_Dropdown optionATMP;
-        [SerializeField] private TMP_Dropdown optionBTMP;
+        [SerializeField] private TMP_Dropdown ageGroupTMP;
+        [SerializeField] private TMP_Dropdown genderTMP;
 
-        [SerializeField] private Dropdown optionAUGUI;
-        [SerializeField] private Dropdown optionBUGUI;
+        [SerializeField] private Dropdown ageGroupUGUI;
+        [SerializeField] private Dropdown genderUGUI;
 
         [Header("UI - Controls / Feedback")]
         [SerializeField] private Button continueButton;     // your “Join/Continue” button
@@ -58,8 +60,11 @@ namespace Simulator.Scripts
             string fullName = ReadInput(nameTMP, nameUGUI);
             string email    = ReadInput(emailTMP, emailUGUI);
             string phone    = ReadInput(phoneTMP, phoneUGUI);
-            string optionA  = ReadDropdown(optionATMP, optionAUGUI);
-            string optionB  = ReadDropdown(optionBTMP, optionBUGUI);
+            string ageGroup = ReadDropdown(ageGroupTMP, ageGroupUGUI);
+            string gender   = ReadDropdown(genderTMP, genderUGUI);
+
+            userConfig.clientName = fullName;
+            userConfig.clientEmail = email;
 
             // Minimal validation
             if (string.IsNullOrWhiteSpace(fullName))
@@ -72,12 +77,14 @@ namespace Simulator.Scripts
                 FailUI("Email is required.");
                 return;
             }
+            
+            Debug.Log($"[SubmissionSender] Stored user data in SelectionBus: {fullName}, {email}");
 
-            StartCoroutine(SendSubmissionWithRetry(fullName, email, phone, optionA, optionB));
+            StartCoroutine(SendSubmissionWithRetry(fullName, email, phone, ageGroup, gender));
         }
 
         // -------- Retry wrapper --------
-        private IEnumerator SendSubmissionWithRetry(string fullName, string email, string phone, string optionA, string optionB)
+        private IEnumerator SendSubmissionWithRetry(string fullName, string email, string phone, string ageGroup, string gender)
         {
             _isSending = true;
             SetButtonInteractable(false);
@@ -88,7 +95,7 @@ namespace Simulator.Scripts
             while (true)
             {
                 attempt++;
-                yield return SendOnce(fullName, email, phone, optionA, optionB);
+                yield return SendOnce(fullName, email, phone, ageGroup, gender);
 
                 if (_lastSendWasSuccess) break;
 
@@ -112,19 +119,19 @@ namespace Simulator.Scripts
         }
 
         // -------- Single send --------
-        private IEnumerator SendOnce(string fullName, string email, string phone, string optionA, string optionB)
+        private IEnumerator SendOnce(string fullName, string email, string phone, string ageGroup, string gender)
         {
             _lastSendWasSuccess = false;
             _lastCode = 0;
 
             var payload = new Payload
             {
-                secret  = sharedSecret,
+                secret   = sharedSecret,
                 fullName = fullName,
                 email    = email,
                 phone    = phone,
-                optionA  = optionA,
-                optionB  = optionB
+                ageGroup = ageGroup,
+                gender   = gender
             };
 
             string json = JsonUtility.ToJson(payload);
@@ -152,7 +159,7 @@ namespace Simulator.Scripts
                 if ((_lastCode >= 200 && _lastCode < 300) || _lastCode == 302)
                 {
                     _lastSendWasSuccess = true;
-                    SuccessUI("✅ Data submitted successfully!");
+                    SuccessUI(" Data submitted successfully!");
 
                     if (_lastCode == 302)
                     {
@@ -181,7 +188,7 @@ namespace Simulator.Scripts
 
                 // Failure
                 string body = req.downloadHandler != null ? req.downloadHandler.text : "";
-                Debug.LogError($"❌ Submit failed: {_lastCode} {req.error}\n{body}");
+                Debug.LogError($"Submit failed: {_lastCode} {req.error}\n{body}");
                 FailUI($"Submit failed ({_lastCode}).");
             }
         }
@@ -244,8 +251,9 @@ namespace Simulator.Scripts
             public string fullName;
             public string email;
             public string phone;
-            public string optionA;
-            public string optionB;
+            public string ageGroup;
+            public string gender;
         }
     }
 }
+

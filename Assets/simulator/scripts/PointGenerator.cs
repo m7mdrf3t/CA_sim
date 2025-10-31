@@ -39,6 +39,9 @@ public class PointGenerator : MonoBehaviour
 {
     #region Configuration
 
+    [Header("Distribution System")]
+    private DistributionSystem system;
+
     [Header("Configuration")]
     [SerializeField, Tooltip("Optional UserConfig to drive dimensions.")]
     private UserConfig configuration;
@@ -86,6 +89,8 @@ public class PointGenerator : MonoBehaviour
     [SerializeField] private bool topToBottom = true;
 
     [Header("Fixed Spacing (If Mode = FixedSpacing)")]
+
+    private DensityLevel densityLevel = DensityLevel.High;
     [SerializeField, Range(0.01f, 1f)] private float spacingX = 0.10f;
     [SerializeField, Range(0.01f, 1f)] private float spacingZ = 0.08f;
 
@@ -157,8 +162,29 @@ public class PointGenerator : MonoBehaviour
 
     private void Start()
     {
+        system = GetComponent<DistributionSystem>();
         // Apply config on start if it exists
         ApplyConfiguration(configuration);
+    }
+    public void SetDensityLevel(DensityLevel level)
+    {
+        densityLevel = level;
+        // Update spacing based on selected level
+        var s = DetermineDensitySpacing(densityLevel);
+        spacingX = s;
+        spacingZ = s;
+
+        // If you want immediate update in editor:
+        #if UNITY_EDITOR
+        if (!Application.isPlaying) UnityEditor.EditorApplication.QueuePlayerLoopUpdate();
+        #endif
+
+        // Recompute & respawn if you do this at runtime
+
+        // var pts = GeneratePointsData();
+        // SpawnPointPrefabs(pts);
+        system.ClearSystem();
+        system.BuildSystem();
     }
 
     private void OnValidate()
@@ -166,6 +192,17 @@ public class PointGenerator : MonoBehaviour
         if (activeShape != null)
         {
             activeShape.OnValidate(); // Pass validation down to the active shape
+        }
+
+        if(densityLevel == DensityLevel.High)
+        {
+            spacingX = spacingZ = 0.05f;    
+        }
+        else if(densityLevel == DensityLevel.Medium) {
+            spacingX = spacingZ = 0.1f;
+        }
+        else if(densityLevel == DensityLevel.Low) {
+            spacingX = spacingZ = 0.5f;
         }
     }
 
@@ -325,8 +362,11 @@ public class PointGenerator : MonoBehaviour
 
     private void CalculateFixedSpacingGrid(ref GridMetrics metrics)
     {
+        var s = DetermineDensitySpacing(densityLevel);
+        spacingX = spacingZ = s;
+
         metrics.Columns = Mathf.Max(1, Mathf.FloorToInt(metrics.UsableWidth / Mathf.Max(1e-6f, spacingX)) + 1);
-        metrics.Rows = Mathf.Max(1, Mathf.FloorToInt(metrics.UsableHeight / Mathf.Max(1e-6f, spacingZ)) + 1);
+        metrics.Rows = Mathf.Max(1, Mathf.FloorToInt(metrics.UsableHeight / Mathf.Max(1e-6f, spacingX)) + 1);
         metrics.SpacingX = metrics.Columns == 1 ? 0f : metrics.UsableWidth / (metrics.Columns - 1);
         metrics.SpacingZ = metrics.Rows == 1 ? 0f : metrics.UsableHeight / (metrics.Rows - 1);
     }
@@ -380,6 +420,18 @@ public class PointGenerator : MonoBehaviour
         metrics.Rows = rows;
         metrics.SpacingX = cols == 1 ? metrics.UsableWidth : metrics.UsableWidth / (cols - 1);
         metrics.SpacingZ = rows == 1 ? metrics.UsableHeight : metrics.UsableHeight / (rows - 1);
+    }
+
+    private float DetermineDensitySpacing(DensityLevel level)
+    {
+        switch (level)
+        {
+            case DensityLevel.High:     return 0.03f;
+            case DensityLevel.Medium:   return 0.04f;
+            case DensityLevel.Low:      return 0.05f;
+            default:
+                return 0.1f;
+        }
     }
 
     private int SimulateAcceptedPoints(int cols, int rows, float dx, float dz)

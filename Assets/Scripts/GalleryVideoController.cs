@@ -17,39 +17,33 @@ public class GalleryVideoController : MonoBehaviour
     [SerializeField] private Button[] buttons;
 
     [Header("Optional: auto-find buttons under this parent if array is empty")]
-    [SerializeField] private Transform buttonsParent; // e.g., your "Gallery" panel
+    [SerializeField] private Transform buttonsParent; // e.g., "Gallery" panel
 
     public int CurrentIndex { get; private set; } = -1;
-
-    /// <summary> Fired whenever a clip is finally started (after prepare completes). </summary>
     public event Action<int> OnClipChanged;
 
-    // Debounce state
     private bool isPreparing;
-
-    // Listener bookkeeping to avoid duplicates
     private bool wired;
     private readonly List<UnityAction> cachedButtonDelegates = new List<UnityAction>();
+    private int lastGalleryIndex = -1;
 
-    // ===== Read-only accessors to avoid reflection =====
     public IReadOnlyList<VideoClip> Clips => clips;
     public string GetClipName(int index) =>
         (index >= 0 && index < clips.Length && clips[index] != null) ? clips[index].name : null;
 
-    // Robust thumbnail pull from a Button
     public Sprite GetButtonSprite(int index)
     {
         if (buttons == null || index < 0 || index >= buttons.Length) return null;
 
-        // 1) Try the Button's targetGraphic
+        // Try targetGraphic first
         var img = buttons[index].targetGraphic as Image;
         if (img != null && img.sprite != null) return img.sprite;
 
-        // 2) Try an Image on the same GameObject
+        // Then same GameObject
         img = buttons[index].GetComponent<Image>();
         if (img != null && img.sprite != null) return img.sprite;
 
-        // 3) Try any child Image (common in styled prefabs)
+        // Then any child Image
         img = buttons[index].GetComponentInChildren<Image>(true);
         if (img != null && img.sprite != null) return img.sprite;
 
@@ -58,13 +52,10 @@ public class GalleryVideoController : MonoBehaviour
 
     private void Awake()
     {
-        // Auto-find buttons
+        // Auto-find buttons if needed
         if ((buttons == null || buttons.Length == 0) && buttonsParent != null)
-        {
             buttons = buttonsParent.GetComponentsInChildren<Button>(includeInactive: true);
-        }
 
-        // Safety
         if (videoPlayer == null)
         {
             Debug.LogError("[GalleryVideoController] No VideoPlayer assigned.");
@@ -79,36 +70,74 @@ public class GalleryVideoController : MonoBehaviour
         videoPlayer.skipOnDrop = true;
     }
 
-    private void OnEnable()
+    private void Start()
     {
-        WireButtons();
+        if (clips != null && clips.Length > 0)
+        {
+            if (videoPlayer.clip == null)
+            {
+                PlayIndex(0);
+                lastGalleryIndex = 0; // ensure fallback index is valid
+            }
+            else
+            {
+                for (int i = 0; i < clips.Length; i++)
+                {
+                    if (clips[i] == videoPlayer.clip)
+                    {
+                        CurrentIndex = i;
+                        lastGalleryIndex = i;
+                        break;
+                    }
+                }
+            }
+        }
+
+        // Ensure buttons reflect current clip count on start
+        RefreshButtonStates();
     }
 
-    private void OnDisable()
+    private void OnEnable() => WireButtons();
+
+    private void OnDisable() => UnwireButtons();
+
+    private void OnDestroy()
     {
-        UnwireButtons();
+        // Safety: make sure we’re not still subscribed
+        if (videoPlayer != null)
+            videoPlayer.prepareCompleted -= OnPrepared;
     }
 
     private void WireButtons()
     {
-        if (wired || buttons == null) return;
+        if (buttons == null || buttons.Length == 0)
+        {
+            if (buttonsParent != null)
+                buttons = buttonsParent.GetComponentsInChildren<Button>(includeInactive: true);
+        }
+        if (buttons == null) return;
+
+        // Clear previous listeners
+        foreach (var btn in buttons) if (btn) btn.onClick.RemoveAllListeners();
 
         int count = Mathf.Min(buttons.Length, clips != null ? clips.Length : 0);
         cachedButtonDelegates.Clear();
+
         for (int i = 0; i < count; i++)
         {
-            int idx = i; // capture
+            int idx = i;
             UnityAction a = () => PlayIndex(idx);
             cachedButtonDelegates.Add(a);
             buttons[i].onClick.AddListener(a);
         }
+
+        // Disable any extra buttons beyond clip count
+        for (int i = count; i < (buttons?.Length ?? 0); i++)
+        {
+            if (buttons[i] != null) buttons[i].interactable = false;
+        }
+
         wired = true;
-
-        if (buttons != null && (clips == null || clips.Length == 0))
-            Debug.LogWarning("[GalleryVideoController] Buttons set but no clips assigned.");
-
-        if (clips != null && clips.Length > 0 && (buttons == null || buttons.Length == 0))
-            Debug.LogWarning("[GalleryVideoController] Clips set but no buttons assigned/found.");
     }
 
     private void UnwireButtons()
@@ -125,10 +154,6 @@ public class GalleryVideoController : MonoBehaviour
         wired = false;
     }
 
-    /// <summary>
-    /// Play a clip from our gallery list by index (called by gallery buttons).
-    /// Debounced to avoid flicker when spamming clicks.
-    /// </summary>
     public void PlayIndex(int index)
     {
         if (clips == null || index < 0 || index >= clips.Length)
@@ -137,22 +162,16 @@ public class GalleryVideoController : MonoBehaviour
             return;
         }
 
-        VideoClip next = clips[index];
-
-        // If same clip and already preparing/playing, ignore
-        if ((isPreparing && videoPlayer.clip == next) ||
-            (videoPlayer.clip == next && videoPlayer.isPlaying))
+        var next = clips[index];
+        if ((isPreparing && videoPlayer.clip == next) || (videoPlayer.clip == next && videoPlayer.isPlaying))
             return;
 
         CurrentIndex = index;
+        lastGalleryIndex = index;
         StartPrepare(next);
     }
 
-    /// <summary>
-    /// Allow any external system (e.g., ColorSelection) to play a different clip on the same VideoPlayer.
-    /// Sets CurrentIndex = -1 to indicate "not a gallery clip".
-    /// </summary>
-    public void PlayExternalClip(VideoClip clip, bool markAsExternal = true)
+    public void PlayExternalClip(VideoClip clip, bool markAsExternal = false)
     {
         if (clip == null)
         {
@@ -162,8 +181,7 @@ public class GalleryVideoController : MonoBehaviour
 
         if (markAsExternal) CurrentIndex = -1;
 
-        if ((isPreparing && videoPlayer.clip == clip) ||
-            (videoPlayer.clip == clip && videoPlayer.isPlaying))
+        if ((isPreparing && videoPlayer.clip == clip) || (videoPlayer.clip == clip && videoPlayer.isPlaying))
             return;
 
         StartPrepare(clip);
@@ -175,7 +193,7 @@ public class GalleryVideoController : MonoBehaviour
         videoPlayer.Stop();
         videoPlayer.clip = clip;
 
-        videoPlayer.prepareCompleted -= OnPrepared;
+        videoPlayer.prepareCompleted -= OnPrepared; // avoid dupes
         videoPlayer.prepareCompleted += OnPrepared;
         videoPlayer.Prepare();
     }
@@ -188,7 +206,68 @@ public class GalleryVideoController : MonoBehaviour
         OnClipChanged?.Invoke(CurrentIndex);
     }
 
-    // Optional: play by clip name in the gallery
+    public int ResolveCurrentIndex()
+    {
+        if (CurrentIndex >= 0) return CurrentIndex;
+        if (lastGalleryIndex >= 0) return lastGalleryIndex;
+
+        if (videoPlayer != null && videoPlayer.clip != null && clips != null)
+        {
+            for (int i = 0; i < clips.Length; i++)
+                if (clips[i] == videoPlayer.clip) return i;
+        }
+        return -1;
+    }
+
+    /// <summary>
+    /// Swap the gallery clips at runtime and optionally refresh button sprites.
+    /// Also refreshes button interactivity based on new clip count.
+    /// </summary>
+    public void SetClips(VideoClip[] newClips, Sprite[] newButtonSprites = null)
+    {
+        clips = newClips ?? Array.Empty<VideoClip>();
+
+        // Update thumbnails if provided
+        if (newButtonSprites != null && buttons != null)
+        {
+            int count = Mathf.Min(buttons.Length, newButtonSprites.Length);
+            for (int i = 0; i < count; i++)
+            {
+                var img = buttons[i].GetComponentInChildren<Image>(true);
+                if (img) img.sprite = newButtonSprites[i];
+            }
+        }
+
+        // Refresh availability of buttons vs clips
+        RefreshButtonStates();
+
+        // Reset to first clip if available
+        if (clips.Length > 0) PlayIndex(0);
+        else
+        {
+            CurrentIndex = -1;
+            lastGalleryIndex = -1;
+            videoPlayer.Stop();
+            videoPlayer.clip = null;
+        }
+    }
+
+    /// <summary>
+    /// Enable/disable buttons based on clip count and keep existing listeners.
+    /// Call this after changing clips or wiring buttons.
+    /// </summary>
+    private void RefreshButtonStates()
+    {
+        if (buttons == null) return;
+
+        int activeCount = Mathf.Min(buttons.Length, clips != null ? clips.Length : 0);
+        for (int i = 0; i < buttons.Length; i++)
+        {
+            if (buttons[i] == null) continue;
+            buttons[i].interactable = i < activeCount;
+        }
+    }
+
     public void PlayByName(string clipName)
     {
         if (clips == null) return;

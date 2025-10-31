@@ -122,7 +122,7 @@ public class CircularRingChandelierSurfaceFull : HangerSurface
         float distFromRingCenter = Mathf.Abs(r - ringCenter);
         float ringCurve = Mathf.Pow(distFromRingCenter / ringHalfWidth, 2f) * heightVariation * 0.2f;
         
-        return height - ringCurve;
+        return ApplyHeightOffset(height - ringCurve);
     }
 
     // ---------------- Projection ----------------

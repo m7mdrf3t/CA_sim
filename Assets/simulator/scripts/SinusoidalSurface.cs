@@ -133,7 +133,7 @@ public class SinusoidalSurface : HangerSurface
         // Calculate hanger length
         float length = Mathf.Abs(ceilingHeight - surfaceHeight);
 
-        return Mathf.Max(0.1f, length);
+        return ApplyHeightOffset(Mathf.Max(0.1f, length));
     }
 
     /// <summary>

@@ -1,6 +1,7 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Video;
 
 // ==================== CRYSTAL VARIANT SELECTION UI ====================
 /// <summary>
@@ -11,8 +12,10 @@ public class CrystalVariantSelectionUI : MonoBehaviour
 {
     [Header("UI References")]
     [SerializeField] private GameObject variantPanel;
+    [SerializeField] private VideoPlayer CrystalVideoClip;
     [SerializeField] private Transform variantButtonContainer;
     [SerializeField] private GameObject variantButtonPrefab;
+    [SerializeField] private int currentVariantIndex = 0;
     [SerializeField] private TMP_Text titleText;
 
     [Header("Crystal Colors Sprite Icons")]
@@ -20,12 +23,6 @@ public class CrystalVariantSelectionUI : MonoBehaviour
     
     private CrystalDatabase.CrystalCategory currentCategory;
     
-    void Start()
-    {
-    
-    }
-
-
     
     /// <summary>
     /// Show variants for a specific crystal type
@@ -67,6 +64,7 @@ public class CrystalVariantSelectionUI : MonoBehaviour
         // Create button for each variant
         for (int i = 0; i < currentCategory.variants.Count; i++)
         {
+            Debug.Log($"Creating button for variant {i}");
             int variantIndex = i; // Capture for closure
             var variant = currentCategory.variants[i];
             
@@ -91,8 +89,16 @@ public class CrystalVariantSelectionUI : MonoBehaviour
             
             if (buttonImage != null)
             {
+                if(currentCategory.crystalMainTypes == CrystalMainTypes.Refraction && currentCategory.type != CrystalType.North_start)
+                {
+                    buttonImage.sprite = crystalColors[7];
+                }
+                else
+                {
+                    Debug.Log($"Setting icon for variant {variant.variantName}");
                 switch (variant.variantName.ToLower())
                 {
+                    
                     case "red":
                         buttonImage.sprite = crystalColors.Length > 0 ? crystalColors[0] : null;
                         break;
@@ -113,8 +119,11 @@ public class CrystalVariantSelectionUI : MonoBehaviour
                         break;
                     default:
                         buttonImage.sprite = null;
+                        Debug.LogWarning($"No icon found for variant {variant.variantName}");
                         break;
                 }
+                }
+                
                 // buttonImage.color = variant.color;
             }
         }
@@ -128,11 +137,15 @@ public class CrystalVariantSelectionUI : MonoBehaviour
         if (currentCategory == null) return;
         
         // Add the selection to config
-        ConfigurationManager.Instance.AddCrystalSelection(
-            currentCategory.type, 
-            variantIndex
-        );
-        
+        currentVariantIndex = variantIndex;
+        // Play video
+        VideoClip videoClip = currentCategory.variants[variantIndex].videoClip;
+        if (videoClip != null)
+        {
+            CrystalVideoClip.clip = videoClip;
+            CrystalVideoClip.Play();
+        }
+
         Debug.Log($"Added: {currentCategory.categoryName}, Variant {variantIndex}");
         
         // Close panel
@@ -145,7 +158,38 @@ public class CrystalVariantSelectionUI : MonoBehaviour
             selectedUI.RefreshList();
         }
     }
+
+    public void addCrystalToSelection()
+    {
+        if (currentCategory == null) return;
+        
+        // Add the selection to config
+        ConfigurationManager.Instance.AddCrystalSelection(
+            currentCategory.type, 
+            currentVariantIndex,
+            0f,
+            currentCategory.price
+        );
+
+        // Refresh selected crystals list
+        SelectedCrystalsUI selectedUI = FindFirstObjectByType<SelectedCrystalsUI>();
+        if (selectedUI != null)
+        {
+            selectedUI.RefreshList();
+        }
+    }
     
+    public void SetCrystalDefaultVideo(VideoClip _videoClip)
+    {
+        // Play video
+        if (_videoClip != null)
+        {
+            Debug.Log($"Play video: {_videoClip.name}");
+            CrystalVideoClip.clip = _videoClip;
+            CrystalVideoClip.Play();
+        }
+    }
+
     /// <summary>
     /// Close the variant selection panel
     /// </summary>

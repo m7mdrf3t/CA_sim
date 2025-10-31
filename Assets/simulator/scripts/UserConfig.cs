@@ -18,127 +18,13 @@ public class CrystalVariant
     
     [Tooltip("Video clip for this variant (for previews/demos)")]
     public VideoClip videoClip;
+
+    public float price;
 }
 
-// ==================== CRYSTAL DATABASE ====================
-/// <summary>
-/// Central database holding all available crystal types
-/// Create one instance: Assets/Create/Crystal System/Crystal Database
-/// </summary>
-[CreateAssetMenu(fileName = "CrystalDatabase", menuName = "Crystal System/Crystal Database", order = 0)]
-public class CrystalDatabase : ScriptableObject
-{
-    [System.Serializable]
-    public class CrystalCategory
-    {
-        public string categoryName;
-        public CrystalType type;
-        
-        [Header("Shared Resources (used by all variants)")]
-        [Tooltip("Prefab shared by all variants in this category")]
-        public GameObject prefab;
-        
-        [Tooltip("Material shared by all variants (color will be modified per variant)")]
-        public Material sharedMaterial;
-        
-        [Header("Category Defaults")]
-        [Tooltip("Default sprite for the category")]
-        public Sprite defaultSprite;
-        
-        [Tooltip("Default video for the category")]
-        public VideoClip defaultVideoClip;
-        
-        [Header("Variants")]
-        [Tooltip("Available color variants for this crystal type")]
-        public List<CrystalVariant> variants = new List<CrystalVariant>();
-    }
+public enum DensityLevel { Low, Medium, High } // fixed spelling
 
-    public List<CrystalCategory> categories = new List<CrystalCategory>();
-
-    /// <summary>
-    /// Get all variants for a specific crystal type
-    /// </summary>
-    public List<CrystalVariant> GetVariantsForType(CrystalType type)
-    {
-        foreach (var category in categories)
-        {
-            if (category.type == type)
-                return category.variants;
-        }
-        return new List<CrystalVariant>();
-    }
-
-    /// <summary>
-    /// Get a specific variant by name and type
-    /// </summary>
-    public CrystalVariant GetVariant(CrystalType type, string variantName)
-    {
-        var variants = GetVariantsForType(type);
-        return variants.Find(v => v.variantName == variantName);
-    }
-
-    /// <summary>
-    /// Get category for a specific crystal type
-    /// </summary>
-    public CrystalCategory GetCategory(CrystalType type)
-    {
-        return categories.Find(c => c.type == type);
-    }
-
-    /// <summary>
-    /// Get the shared prefab for a crystal type
-    /// </summary>
-    public GameObject GetPrefab(CrystalType type)
-    {
-        var category = GetCategory(type);
-        return category?.prefab;
-    }
-
-    /// <summary>
-    /// Get the shared material for a crystal type
-    /// </summary>
-    public Material GetSharedMaterial(CrystalType type)
-    {
-        var category = GetCategory(type);
-        return category?.sharedMaterial;
-    }
-
-    /// <summary>
-    /// Get icon for a specific variant (falls back to category default)
-    /// </summary>
-    public Sprite GetVariantIcon(CrystalType type, int variantIndex)
-    {
-        var category = GetCategory(type);
-        if (category == null) return null;
-
-        if (variantIndex >= 0 && variantIndex < category.variants.Count)
-        {
-            var variant = category.variants[variantIndex];
-            if (variant.icon != null)
-                return variant.icon;
-        }
-
-        return category.defaultSprite;
-    }
-
-    /// <summary>
-    /// Get video clip for a specific variant (falls back to category default)
-    /// </summary>
-    public VideoClip GetVariantVideo(CrystalType type, int variantIndex)
-    {
-        var category = GetCategory(type);
-        if (category == null) return null;
-
-        if (variantIndex >= 0 && variantIndex < category.variants.Count)
-        {
-            var variant = category.variants[variantIndex];
-            if (variant.videoClip != null)
-                return variant.videoClip;
-        }
-
-        return category.defaultVideoClip;
-    }
-}
+public enum colorStyle { Coctail, fade }
 
 // ==================== USER CONFIG ====================
 /// <summary>
@@ -147,6 +33,9 @@ public class CrystalDatabase : ScriptableObject
 [CreateAssetMenu(fileName = "NewUserConfig", menuName = "Crystal System/User Configuration", order = 1)]
 public class UserConfig : ScriptableObject
 {
+    public string clientName;
+    public string clientEmail;
+
     [Header("Box Dimensions")]
     [Tooltip("Box width in meters")]
     [Min(0.01f)]
@@ -160,13 +49,50 @@ public class UserConfig : ScriptableObject
     [Min(0.01f)]
     public float zSize = 1f;
 
+    [Tooltip("Area in square meters")]
+    [Min(0.01f)]
+    public float area = 1f;
+
+    public float BeadsHight = 1f;
+
+    [Tooltip("Total Spots")]
+    [Min(0.01f)]
+    public float totalSpots = 1f;
+
+    [Tooltip("Total Points")]
+    [Min(0.01f)]
+    public float totalPoints = 1f;
+
+    public float finalPrice;
+
+    [Header("Densities")]
+    [Tooltip("Density level")]
+    public DensityLevel densityLevel = DensityLevel.High;   
+
+    public colorStyle colorStyle = colorStyle.Coctail;
+
+    [Tooltip("Density percentage or custom value")]
+    [Min(0.01f)]
+    public float highDensity = 1f, mediumDensity = 1f, lowDensity = 1f , density = 1f;
+
+    [Header("Visualization Settings")]
+    [Tooltip("Show beads in the simulator")]
+    public bool showBeads = true;
+    
+    public float beadCost;
+    public bool WithBase = true;
+    public float mirrorCost;
+
+
     [Header("Crystal Selection")]
     [Tooltip("Reference to the crystal database")]
     public CrystalDatabase crystalDatabase;
+
+    public int GallaryIndex = 0;
     
     [Tooltip("Hanger surface type")]
     [SerializeField]
-    public HangerBuilder.SurfaceType hangerSurface = new HangerBuilder.SurfaceType ();
+    public SurfaceType hangerSurface = new SurfaceType ();
 
     [Tooltip ("Base shape type")]
     [SerializeField]
@@ -179,8 +105,11 @@ public class UserConfig : ScriptableObject
     [System.Serializable]
     public class CrystalSelection
     {
+        [Tooltip("Main Type")]
+        public CrystalMainTypes mainTypes = CrystalMainTypes.Refraction;
+ 
         public bool enabled = true;
-        public CrystalType crystalType = CrystalType.Breeze;
+        public CrystalType crystalType = CrystalType.Galaxy;
         
         [Tooltip("Index of the color variant to use")]
         public int variantIndex = 0;
@@ -189,12 +118,23 @@ public class UserConfig : ScriptableObject
         [Tooltip("Weight/probability of this crystal appearing (0-1)")]
         public float spawnWeight = 1f;
 
+        [Tooltip("Spawn ratio (0-100) for this crystal type")]
+        [Range(0f, 1f)]
+        public float spawnRatio = 0f;
+
+        [Tooltip("Price for this crystal type")]
+        public float price = 0f;
+
         public CrystalSelection()
         {
             enabled = true;
-            crystalType = CrystalType.Breeze;
+            mainTypes = CrystalMainTypes.Refraction; 
+            crystalType = CrystalType.Galaxy;
             variantIndex = 0;
             spawnWeight = 1f;
+            spawnRatio = 0f;
+            price = 0f;
+
         }
     }
 
@@ -206,8 +146,6 @@ public class UserConfig : ScriptableObject
     [Range(1, 100)]
     public int crystalsPerSquareMeter = 16;
 
-    // ==================== HELPER METHODS ====================
-    
     /// <summary>
     /// Get all enabled crystal selections
     /// </summary>
@@ -229,6 +167,12 @@ public class UserConfig : ScriptableObject
         int index = Mathf.Clamp(selection.variantIndex, 0, variants.Count - 1);
         return variants[index];
     }
+
+    private void Start() {
+    
+        Debug.Log("I CAN LOG!");
+    }
+    
 
     /// <summary>
     /// Get prefab for a specific selection (from category)
@@ -287,6 +231,7 @@ public class UserConfig : ScriptableObject
         public VideoClip videoClip;
         public CrystalType crystalType;
         public string variantName;
+        public float price;
     }
 
     /// <summary>
@@ -304,7 +249,8 @@ public class UserConfig : ScriptableObject
             icon = GetIconForSelection(selection),
             videoClip = GetVideoForSelection(selection),
             crystalType = selection.crystalType,
-            variantName = variant?.variantName ?? "Unknown"
+            variantName = variant?.variantName ?? "Unknown",
+            price = selection.price,
         };
     }
 
@@ -389,6 +335,36 @@ public class UserConfig : ScriptableObject
         return GetSpawnDataForSelection(selection);
     }
 
+    public float GetTotalPrice()
+    {
+        float total = 0f;
+        foreach (var sel in crystalSelections)
+        {
+            float selPointsSum = (sel.spawnRatio/100f) * sel.price * totalPoints;
+            total += selPointsSum;
+        }
+
+        if (showBeads)
+        {
+            float beadsCost = totalPoints * 7 * 5 * area * BeadsHight;
+            Debug.Log($"[UserConfig] Adding bead cost {beadsCost} for {totalPoints} points and {area} m2 area.");
+            total += beadsCost;
+        }
+
+        if(densityLevel == DensityLevel.High)
+        {
+            return total ;
+        }
+        else if(densityLevel == DensityLevel.Medium)
+        {
+            return total * 0.75f;
+        }
+        else
+        {
+            return total * 0.50f;
+        }
+    }
+
     public List<CrystalSpawnData> GetAllCrystalVariantData()
     {
         var Enabled = GetEnabledSelections();
@@ -412,7 +388,7 @@ public class UserConfig : ScriptableObject
     /// </summary>
     public void AddCrystalSelection()
     {
-        if (crystalSelections.Count < 4)
+        if (crystalSelections.Count < 5)
         {
             crystalSelections.Add(new CrystalSelection());
         }
@@ -485,6 +461,97 @@ public class UserConfig : ScriptableObject
         return true;
     }
 
+// <summary>
+/// Save spawn ratios from slider manager - SIMPLIFIED VERSION
+/// Matches by variant name directly
+/// </summary>
+    public void SaveSpawnRatios(Dictionary<string, float> ratios)
+{
+    Debug.Log($"[UserConfig] SaveSpawnRatios called with {ratios.Count} ratios");
+    Debug.Log($"[UserConfig] Available keys: {string.Join(", ", ratios.Keys)}");
+    
+    int matchCount = 0;
+    
+    for (int i = 0; i < crystalSelections.Count; i++)
+    {
+        var selection = crystalSelections[i];
+        
+        // Get the variant name for this selection
+        var variant = GetVariantForSelection(selection);
+        string variantName = variant != null ? variant.variantName : selection.crystalType.ToString();
+        
+        Debug.Log($"[UserConfig] Selection {i}: Looking for key '{variantName}'");
+        
+        // Try to match by variant name
+        if (ratios.ContainsKey(variantName))
+        {
+            float oldRatio = selection.spawnRatio;
+            selection.spawnRatio = ratios[variantName];
+            selection.spawnWeight = ratios[variantName] / 100f;
+            matchCount++;
+            Debug.Log($"[UserConfig] ✓ Matched! Updated {variantName}: {oldRatio:F2} -> {selection.spawnRatio:F2}");
+        }
+        else
+        {
+            Debug.LogWarning($"[UserConfig] ✗ No match for '{variantName}'");
+        }
+    }
+
+    #if UNITY_EDITOR
+    UnityEditor.EditorUtility.SetDirty(this);
+    UnityEditor.AssetDatabase.SaveAssets();
+    UnityEditor.AssetDatabase.Refresh();
+    Debug.Log($"[UserConfig] ✓ Asset marked dirty and saved to disk");
+    #endif
+
+    Debug.Log($"[UserConfig] ===== SAVE COMPLETE: {matchCount}/{crystalSelections.Count} ratios updated =====");
+}
+
+    /// <summary>
+    /// Get spawn ratios as dictionary - SIMPLIFIED VERSION
+    /// </summary>
+    public Dictionary<string, float> GetSpawnRatios()
+{
+    Dictionary<string, float> ratios = new Dictionary<string, float>();
+    
+    foreach (var selection in crystalSelections)
+    {
+        var variant = GetVariantForSelection(selection);
+        string variantName = variant != null ? variant.variantName : selection.crystalType.ToString();
+        ratios[variantName] = selection.spawnRatio;
+    }
+    
+    Debug.Log($"[UserConfig] GetSpawnRatios returning {ratios.Count} ratios");
+    return ratios;
+}
+
+    /// <summary>
+    /// Alternative: Save by index (if variant names don't match)
+    /// Use this if the simplified version above doesn't work
+    /// </summary>
+    public void SaveSpawnRatiosByIndex(List<float> ratios)
+{
+    Debug.Log($"[UserConfig] SaveSpawnRatiosByIndex called with {ratios.Count} ratios");
+    
+    int count = Mathf.Min(ratios.Count, crystalSelections.Count);
+    
+    for (int i = 0; i < count; i++)
+    {
+        float oldRatio = crystalSelections[i].spawnRatio;
+        crystalSelections[i].spawnRatio = ratios[i];
+        crystalSelections[i].spawnWeight = ratios[i] / 100f;
+        Debug.Log($"[UserConfig] Updated selection {i}: {oldRatio:F2} -> {ratios[i]:F2}");
+    }
+
+    #if UNITY_EDITOR
+    UnityEditor.EditorUtility.SetDirty(this);
+    UnityEditor.AssetDatabase.SaveAssets();
+    UnityEditor.AssetDatabase.Refresh();
+    #endif
+
+    Debug.Log($"[UserConfig] Saved {count} ratios by index");
+}
+
     /// <summary>
     /// Returns a summary of this configuration
     /// </summary>
@@ -533,12 +600,8 @@ public class UserConfig : ScriptableObject
         }
     }
 }
-
-// ==================== CRYSTAL TYPE ENUM ====================
 public enum CrystalType
 {
-    Breeze,
-    Refraction,
     Custom,
     Aurora_panel,
     Galaxy,
@@ -554,6 +617,25 @@ public enum CrystalType
     Galaxy_stone,
     North_start,
     Rock_crystal,
-    WhireWind
+    WhireWind,
+    Crystel_Rosset,
+    springCanopy,
+    wingpopen,
+    wave,
+    koifish,
+    heritage_drop,
+    heritage_spher,
+    desert_lily,
+    crystal_bubble,
+    crystal_butterfly,
+    wingOpen,
+    wingClose
 
+
+}
+
+public enum CrystalMainTypes
+{
+    Breeze,
+    Refraction,
 }

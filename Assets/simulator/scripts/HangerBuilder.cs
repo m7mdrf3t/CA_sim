@@ -9,24 +9,45 @@ using System.IO;
 /// This class consumes PointData and builds hangers based on a swappable
 /// 'HangerSurface' strategy for length calculation.
 /// </summary>
+public enum HightLevel { Low, Medium, High }
+
+public enum CompsType { fade , cocktail }
+
+public enum SurfaceType { Sinusoidal, Spherical, Flat , ProjectedSphere , ProjectedDoubleSphereSurface , projectedFunnelSurface , CircularRingSurface , CircularRingSurfaceFull , linear} 
+
+
 [ExecuteAlways]
 public class HangerBuilder : MonoBehaviour
 {
+
+
+    #region events 
+
+    public static event Action<string> OnCompsTypeChange ;
+
+    #endregion
+
     #region Configuration
 
     [Header("General Settings")]
     public UserConfig config; // This is now set by DistributionSystem
+    private string currentCompType = "TypeA";
 
     [Header("Source")]
     [SerializeField, Tooltip("The PointGenerator that provides the anchor points.")]
     private PointGenerator pointGenerator;
 
-    // --- MODIFIED: Added FlatSurface ---
-    public enum SurfaceType { Sinusoidal, Spherical, Flat , ProjectedSphere , ProjectedDoubleSphereSurface , projectedFunnelSurface , CircularRingSurface , CircularRingSurfaceFull} 
+    public CompsType compsType = CompsType.cocktail;
+    public HightLevel hightLevel = HightLevel.Medium;
+
+    [SerializeField] private CrystalVariantUIBuilder uiBuilder; // Assign in inspector
 
     [SerializeField, Tooltip("Select the 3D surface equation to use for hanger lengths.")]
     private SurfaceType selectedSurface = SurfaceType.Sinusoidal;
-    
+
+    [SerializeField, Tooltip("Settings for the linear surface.")]
+    public LinearOptionsSurface linearOptionsSurface = new LinearOptionsSurface();
+
     [SerializeField, Tooltip("Settings for the Sinusoidal surface.")]
     public SinusoidalSurface sinusoidalSurface = new SinusoidalSurface();
 
@@ -86,6 +107,9 @@ public class HangerBuilder : MonoBehaviour
     [SerializeField, Tooltip("Direction wires hang (normalized automatically)")]
     private Vector3 hangDirection = Vector3.down;
 
+    [Header("Visual Rendering - Crystal")]
+    [SerializeField] private CrystalDataManager crystalDataManager;
+
     [Header("Visual Rendering - Cylinder Wire")]
     [SerializeField, Tooltip("Material for wire cylinder")]
     private Material wireMaterial;
@@ -137,7 +161,6 @@ public class HangerBuilder : MonoBehaviour
     #endregion
 
     #region Private Fields
-
     private List<Transform> createdHangers = new List<Transform>();
     private const string HANGER_PREFIX = "HANG_";
     private const string EXPORT_CONTAINER_NAME = "ExportedHangers";
@@ -175,6 +198,7 @@ public class HangerBuilder : MonoBehaviour
             selectedSurface = config.hangerSurface;    
             activeSurface = selectedSurface switch
             {
+                SurfaceType.linear => linearOptionsSurface,
                 SurfaceType.CircularRingSurface => CircularRingSurface, 
                 SurfaceType.CircularRingSurfaceFull => CircularRingSurfaceFull, 
                 SurfaceType.projectedFunnelSurface => projectedFunnelSurface,
@@ -187,13 +211,22 @@ public class HangerBuilder : MonoBehaviour
             };
         }
 
+        if (activeSurface != null)
+        {
+            //activeSurface.globalHeightOffset = config.zSize;
+            Debug.Log($"[HangerBuilder] Applied height offset: {config.zSize}");
+        }
+
         if (clearOldOnBuild) ClearAllHangers();
 
         editorPointData = points; // Cache points for gizmos
         lastBuildStats = GenerateHangers(points);
+        crystalDataManager.SetNumberOfWires(lastBuildStats.Created);
+        crystalDataManager.SetNumberOfCrystals(lastBuildStats.Created);
         LogBuildResults();
-    }
+    }    
     
+
     [ContextMenu("Build / Rebuild Hangers (Standalone)")]
     private void BuildStandalone()
     {
@@ -217,8 +250,8 @@ public class HangerBuilder : MonoBehaviour
         pointGenerator.ApplyConfiguration(this.config);
         List<PointData> points = pointGenerator.GeneratePointsData();
         BuildHangers(points);
-    }
-
+    }    
+    
     /// <summary>
     /// Clears all created hangers.
     /// </summary>
@@ -261,8 +294,33 @@ public class HangerBuilder : MonoBehaviour
             Debug.Log($"[HangerBuilder] Cleared {toDestroy.Count} hangers");
     }
 
+    public void SetHightLevel(HightLevel level)
+    {
+        hightLevel = level;
+        // Update spacing based on selected level
+        var s = DetermineHightSpacing(hightLevel);
+        activeSurface.globalHeightOffset = s;
+
+        // If you want immediate update in editor:
+        #if UNITY_EDITOR
+        if (!Application.isPlaying) UnityEditor.EditorApplication.QueuePlayerLoopUpdate();
+        #endif
+
+        // Recompute & respawn if you do this at runtime
+
+        ClearAllHangers();
+        var pts = GenerateHangers(editorPointData);
+    }
+
+    public void SetCompsType(CompsType compsType)
+    {
+        this.compsType = compsType ;
+        
+        ClearAllHangers();
+        var pts = GenerateHangers(editorPointData);
+    }
     #region Export (Unchanged)
-    
+
     [ContextMenu("Export Hangers to OBJ")]
     public void ExportToOBJ()
     {
@@ -328,6 +386,18 @@ public class HangerBuilder : MonoBehaviour
             #else
             Destroy(exportContainer);
             #endif
+        }
+    }
+
+    private float DetermineHightSpacing(HightLevel level)
+    {
+        switch (level)
+        {
+            case HightLevel.High:     return 0.02f;
+            case HightLevel.Medium:   return -0.1f;
+            case HightLevel.Low:      return -0.2f;
+            default:
+                return 0.1f;
         }
     }
 
@@ -423,6 +493,11 @@ public class HangerBuilder : MonoBehaviour
             stats.Created++;
         }
 
+        crystalDataManager.SetNumberOfWires(lastBuildStats.Created);
+        crystalDataManager.SetNumberOfCrystals(lastBuildStats.Created);
+        crystalDataManager.SetCompStyle (compsType.ToString());
+         crystalDataManager.SetBaseShape (selectedSurface.ToString());
+
         return stats;
     }
 
@@ -506,11 +581,23 @@ public class HangerBuilder : MonoBehaviour
             possiblePrefabs.Add(data);
         }
 
-        int randomIndex = UnityEngine.Random.Range(0, possiblePrefabs.Count);
-        UserConfig.CrystalSpawnData endCubePrefab = possiblePrefabs.Count > 0 ? possiblePrefabs[randomIndex] : new UserConfig.CrystalSpawnData();
-        if (endCubePrefab.prefab != null)
+        int randomIndex = 0;
+        UserConfig.CrystalSpawnData selectedVariant = new UserConfig.CrystalSpawnData();
+
+        if(compsType == CompsType.fade)
         {
-            cube = Instantiate(endCubePrefab.prefab, parent); // Instantiate with parent
+            selectedVariant = GetHighestRatioVariant(spawnData);
+            Debug.Log($"[HangerBuilder] Fade mode: Selected highest ratio variant '{selectedVariant.variantName}'");
+
+        }else
+        {
+            selectedVariant = SelectWeightedRandomVariant(spawnData);
+        }
+        
+        // UserConfig.CrystalSpawnData endCubePrefab = possiblePrefabs.Count > 0 ? possiblePrefabs[randomIndex] : new UserConfig.CrystalSpawnData();
+        if (selectedVariant.prefab != null)
+        {
+            cube = Instantiate(selectedVariant.prefab, parent); // Instantiate with parent
             cube.name = $"Weight_{label}";
             cube.transform.localPosition = localPosition; // Use localPosition
             float randomYRot = UnityEngine.Random.Range(rotationRange.x, rotationRange.y);
@@ -520,8 +607,8 @@ public class HangerBuilder : MonoBehaviour
             var renderer = cube.GetComponent<Renderer>();
             if (renderer != null && renderer.material != null)
             {
-                renderer.material.SetColor("_glasscolor", endCubePrefab.color);
-                Debug.Log($"[HangerBuilder] Applied color {endCubePrefab.color} to {cube.name}");
+                renderer.material.SetColor("_glasscolor", selectedVariant.color);
+                Debug.Log($"[HangerBuilder] Applied color {selectedVariant.color} to {cube.name}");
             }
         }
         else
@@ -549,6 +636,138 @@ public class HangerBuilder : MonoBehaviour
                 #endif
             }
         }
+    }
+
+    // <summary>
+    /// Gets the variant with the highest slider ratio
+    /// </summary>
+    private UserConfig.CrystalSpawnData GetHighestRatioVariant(List<UserConfig.CrystalSpawnData> variants)
+    {
+        if (variants == null || variants.Count == 0)
+        {
+            Debug.LogWarning("[HangerBuilder] No variants available.");
+            return new UserConfig.CrystalSpawnData();
+        }
+
+        // If uiBuilder is assigned, get the variant with highest ratio
+        if (uiBuilder != null)
+        {
+            var ratios = uiBuilder.GetCrystalSpawnRatios();
+            
+            if (ratios != null && ratios.Count > 0)
+            {
+                string highestVariantName = null;
+                float highestRatio = -1f;
+
+                // Find the variant with the highest ratio
+                foreach (var kvp in ratios)
+                {
+                    if (kvp.Value > highestRatio)
+                    {
+                        highestRatio = kvp.Value;
+                        highestVariantName = kvp.Key;
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(highestVariantName))
+                {
+                    // Find the matching variant data
+                    foreach (var variant in variants)
+                    {
+                        if (variant.variantName == highestVariantName)
+                        {
+                            Debug.Log($"[HangerBuilder] Found highest ratio variant: '{highestVariantName}' with ratio {highestRatio:P}");
+                            return variant;
+                        }
+                    }
+                }
+            }
+        }
+
+        // Fallback: return first variant
+        Debug.LogWarning("[HangerBuilder] Could not determine highest ratio, using first variant.");
+        return variants[0];
+    }
+
+    private UserConfig.CrystalSpawnData SelectWeightedRandomVariant(List<UserConfig.CrystalSpawnData> variants)
+    {
+        if (variants == null || variants.Count == 0)
+        {
+            Debug.LogWarning("[HangerBuilder] No variants available for selection.");
+            return new UserConfig.CrystalSpawnData();
+        }
+
+        // If uiBuilder is assigned, use the slider ratios
+        if (uiBuilder != null)
+        {
+            // Get the ratios from the slider manager
+            var ratios = uiBuilder.GetCrystalSpawnRatios(); // Returns Dictionary<string, float> with 0-1 values
+
+            if (ratios != null && ratios.Count > 0)
+            {
+                // Perform weighted random selection
+                float randomValue = UnityEngine.Random.Range(0f, 1f);
+                float cumulative = 0f;
+
+                foreach (var variant in variants)
+                {
+                    if (ratios.ContainsKey(variant.variantName))
+                    {
+                        cumulative += ratios[variant.variantName];
+                        if (randomValue <= cumulative)
+                        {
+                            Debug.Log($"[HangerBuilder] Selected variant '{variant.variantName}' with ratio {ratios[variant.variantName]:P}");
+                            return variant;
+                        }
+                    }
+                }
+
+                // Fallback: return last variant if we somehow didn't select one
+                Debug.LogWarning("[HangerBuilder] Fallback to last variant in weighted selection.");
+                return variants[variants.Count - 1];
+            }
+            else
+            {
+                Debug.LogWarning("[HangerBuilder] No ratios available from UIBuilder. Using uniform random.");
+            }
+        }
+        else
+        {
+            Debug.LogWarning("[HangerBuilder] UIBuilder not assigned. Using uniform random selection.");
+        }
+
+        // Fallback to uniform random if no ratios available
+        int randomIndex = UnityEngine.Random.Range(0, variants.Count);
+        return variants[randomIndex];
+    }
+
+
+    private UserConfig.CrystalSpawnData SelectWeightedRandomVariantSimple(List<UserConfig.CrystalSpawnData> variants)
+    {
+        if (variants == null || variants.Count == 0)
+        {
+            return new UserConfig.CrystalSpawnData();
+        }
+
+        // Get the selected variant name from the manager
+        string selectedVariantName = uiBuilder?.SelectRandomCrystalVariant();
+
+        if (!string.IsNullOrEmpty(selectedVariantName))
+        {
+            // Find the matching variant data
+            foreach (var variant in variants)
+            {
+                if (variant.variantName == selectedVariantName)
+                {
+                    Debug.Log($"[HangerBuilder] Selected variant '{selectedVariantName}' using slider ratios");
+                    return variant;
+                }
+            }
+        }
+
+        // Fallback
+        Debug.LogWarning("[HangerBuilder] Could not select from ratios, using random.");
+        return variants[UnityEngine.Random.Range(0, variants.Count)];
     }
 
 // private void CreateEndWeight(Transform parent, Vector3 localPosition, string label)
@@ -681,6 +900,17 @@ public class HangerBuilder : MonoBehaviour
         return true;
     }
 
+    public void SetComponentType(string newType)
+    {
+        if (currentCompType != newType)
+        {
+            currentCompType = newType;
+            Debug.Log($"Component type changed to: {newType}");
+
+            OnCompsTypeChange?.Invoke(newType);
+        }
+    }
+
     #endregion
 
     #region Logging (Unchanged)
@@ -701,6 +931,7 @@ public class HangerBuilder : MonoBehaviour
                        $"  • Wire Radius: {wireRadius:F4}m\n";
 
         Debug.Log(report);
+
     }
 
     #endregion

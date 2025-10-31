@@ -1,0 +1,545 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5013ee8b4b5d943b6ba853848becfc20, type: 3}
+  m_Name: CrystalDatabase
+  m_EditorClassIdentifier: Assembly-CSharp::CrystalDatabase
+  categories:
+  - categoryName: Galaxy
+    crystalMainTypes: 0
+    type: 2
+    prefab: {fileID: 511853128060611615, guid: 25bacd0f89ef7423fbd77ded6f3c9e7c, type: 3}
+    sharedMaterial: {fileID: 2100000, guid: f793cd1445d3841ccb9c5fd6b13537c3, type: 2}
+    defaultSprite: {fileID: 21300000, guid: 09e76ab67c4014fc0905b4e2d00dbfda, type: 3}
+    defaultVideoClip: {fileID: 32900000, guid: 81b4bc2d8ede14e1fa4cdd257dfd15d9, type: 3}
+    price: 365
+    variants:
+    - variantName: Red
+      color: {r: 1, g: 0, b: 0, a: 0}
+      icon: {fileID: 21300000, guid: 09e76ab67c4014fc0905b4e2d00dbfda, type: 3}
+      videoClip: {fileID: 32900000, guid: 0d44cd91c9102488faeda1a6d1df8293, type: 3}
+      price: 0
+    - variantName: Blue
+      color: {r: 0, g: 0.728317, b: 0.9433962, a: 0}
+      icon: {fileID: 21300000, guid: cb660168a40d04337a8f24b1bf065f72, type: 3}
+      videoClip: {fileID: 32900000, guid: 46ec4cc7426604347a7e1f65c6e7cee8, type: 3}
+      price: 0
+    - variantName: Magnet
+      color: {r: 0.9339623, g: 0.6171401, b: 0.004405493, a: 0}
+      icon: {fileID: 21300000, guid: 034bd5d74eba54cbcb1680bede30ada2, type: 3}
+      videoClip: {fileID: 32900000, guid: 06372f97a412741fc800c887d791812d, type: 3}
+      price: 0
+    - variantName: Yellow
+      color: {r: 0.9433962, g: 0.04004982, b: 0.92516476, a: 0}
+      icon: {fileID: 21300000, guid: b19c57c020f6145da90a9349409afca1, type: 3}
+      videoClip: {fileID: 32900000, guid: 774b6eec9c76d4be18a35505f6468714, type: 3}
+      price: 0
+    - variantName: Orange
+      color: {r: 1, g: 0.3419886, b: 0, a: 0}
+      icon: {fileID: 21300000, guid: 692ff2ce8a9e045acbc457fab211bddd, type: 3}
+      videoClip: {fileID: 32900000, guid: 81b4bc2d8ede14e1fa4cdd257dfd15d9, type: 3}
+      price: 0
+  - categoryName: Aurora_frame
+    crystalMainTypes: 1
+    type: 3
+    prefab: {fileID: 2259428950206378337, guid: 9d133d0d32d03492c897ba47b1d0a76d, type: 3}
+    sharedMaterial: {fileID: 2100000, guid: f489c8ef38c7654489409dbd26d6cf48, type: 2}
+    defaultSprite: {fileID: 21300000, guid: 8fa714d9a1e1b428d817ffbe997e71a7, type: 3}
+    defaultVideoClip: {fileID: 32900000, guid: 61853dca0b96540fd9aa097dc82df690, type: 3}
+    price: 1053
+    variants:
+    - variantName: Yellow
+      color: {r: 1, g: 1, b: 1, a: 1}
+      icon: {fileID: 21300000, guid: 8fa714d9a1e1b428d817ffbe997e71a7, type: 3}
+      videoClip: {fileID: 32900000, guid: 61853dca0b96540fd9aa097dc82df690, type: 3}
+      price: 0
+  - categoryName: Crystal_Bloom
+    crystalMainTypes: 1
+    type: 6
+    prefab: {fileID: 4705370706436852594, guid: 3dc9adc561aff496e988c0fa75fa8bb7, type: 3}
+    sharedMaterial: {fileID: 2100000, guid: 393396bdf15286e4a8ffa739dba07c58, type: 2}
+    defaultSprite: {fileID: 21300000, guid: 52307548d86b6419b9424e78914aa20a, type: 3}
+    defaultVideoClip: {fileID: 32900000, guid: b19e9f82779b84f7ba916972534185f9, type: 3}
+    price: 875
+    variants:
+    - variantName: Red
+      color: {r: 1, g: 1, b: 1, a: 1}
+      icon: {fileID: 21300000, guid: 52307548d86b6419b9424e78914aa20a, type: 3}
+      videoClip: {fileID: 32900000, guid: b19e9f82779b84f7ba916972534185f9, type: 3}
+      price: 0
+  - categoryName: Aurora_piller
+    crystalMainTypes: 1
+    type: 4
+    prefab: {fileID: 919132149155446097, guid: 9e40124662ccf364e9b7855877b384fd, type: 3}
+    sharedMaterial: {fileID: 2100000, guid: 58d54599751fe3d4a946e7f6b9e227e2, type: 2}
+    defaultSprite: {fileID: 21300000, guid: 4b2e8b6f46e94490dbcbc02336be333a, type: 3}
+    defaultVideoClip: {fileID: 32900000, guid: 2805adb88e780437ea4d33e64ab17fac, type: 3}
+    price: 822
+    variants:
+    - variantName: Red
+      color: {r: 1, g: 1, b: 1, a: 1}
+      icon: {fileID: 21300000, guid: 4b2e8b6f46e94490dbcbc02336be333a, type: 3}
+      videoClip: {fileID: 32900000, guid: 2805adb88e780437ea4d33e64ab17fac, type: 3}
+      price: 0
+  - categoryName: Aurora_panel
+    crystalMainTypes: 1
+    type: 1
+    prefab: {fileID: 4529215864755969007, guid: 6a5cce678c4304af4bdba80c166656f6, type: 3}
+    sharedMaterial: {fileID: 2100000, guid: 4aa380c713fce8348b9f562865e99369, type: 2}
+    defaultSprite: {fileID: 21300000, guid: 79ad7ad87c91044338b8350c94a7839a, type: 3}
+    defaultVideoClip: {fileID: 32900000, guid: 6d7327efd25e3461ca3f7c2c6da8449b, type: 3}
+    price: 2273
+    variants:
+    - variantName: Red
+      color: {r: 1, g: 1, b: 1, a: 1}
+      icon: {fileID: 21300000, guid: 79ad7ad87c91044338b8350c94a7839a, type: 3}
+      videoClip: {fileID: 32900000, guid: 6d7327efd25e3461ca3f7c2c6da8449b, type: 3}
+      price: 0
+  - categoryName: AzureShell
+    crystalMainTypes: 0
+    type: 5
+    prefab: {fileID: 644445379806947190, guid: 122fc33a5769f4fdca0e3509f87d3cd9, type: 3}
+    sharedMaterial: {fileID: 2100000, guid: eec611d5b4e09fb489f437c3f1bdd9e6, type: 2}
+    defaultSprite: {fileID: 21300000, guid: 6d0355d6fbd7a4fb68dd727f797530ab, type: 3}
+    defaultVideoClip: {fileID: 32900000, guid: 3fb1a5b65ea92489fb5b330c1e2271ce, type: 3}
+    price: 475
+    variants:
+    - variantName: Red
+      color: {r: 0.9433962, g: 0.022249907, b: 0.022249907, a: 0}
+      icon: {fileID: 21300000, guid: 6d0355d6fbd7a4fb68dd727f797530ab, type: 3}
+      videoClip: {fileID: 32900000, guid: 3fb1a5b65ea92489fb5b330c1e2271ce, type: 3}
+      price: 0
+    - variantName: Green
+      color: {r: 0, g: 1, b: 0.12460303, a: 0}
+      icon: {fileID: 21300000, guid: b808b11705ff44d289ba23700ff9c920, type: 3}
+      videoClip: {fileID: 32900000, guid: c9c01baca07324feb8d7f396174fb9f0, type: 3}
+      price: 0
+    - variantName: orange
+      color: {r: 0.9245283, g: 0.58427036, b: 0.13519046, a: 0}
+      icon: {fileID: 21300000, guid: c9ace5cf0cd30462da0392a6cab27a16, type: 3}
+      videoClip: {fileID: 32900000, guid: 806d935cdd0e5461aad7545dad7d03ea, type: 3}
+      price: 0
+    - variantName: Magnet
+      color: {r: 0.723, g: 0, b: 0.5962105, a: 0}
+      icon: {fileID: 21300000, guid: 1e91a94a3c3c244ae80e8bbdb5da1262, type: 3}
+      videoClip: {fileID: 32900000, guid: d17219db99e3746ee9aaf1a13db33fb5, type: 3}
+      price: 0
+    - variantName: Yellow
+      color: {r: 1, g: 0.8217412, b: 0, a: 0}
+      icon: {fileID: 21300000, guid: 7e5fac8dba42c4e4493de09ca6cc8f9f, type: 3}
+      videoClip: {fileID: 32900000, guid: 26abcbb16ced849cdad24dac98b22d93, type: 3}
+      price: 0
+  - categoryName: crystal_bubble
+    crystalMainTypes: 1
+    type: 24
+    prefab: {fileID: 2259428950206378337, guid: 9d133d0d32d03492c897ba47b1d0a76d, type: 3}
+    sharedMaterial: {fileID: 2100000, guid: f489c8ef38c7654489409dbd26d6cf48, type: 2}
+    defaultSprite: {fileID: 21300000, guid: 7f061f9b733d544119585050ccaf4f0b, type: 3}
+    defaultVideoClip: {fileID: 32900000, guid: 433a399c0e0e847efb4c70d8cadcdeb0, type: 3}
+    price: 1053
+    variants:
+    - variantName: Yellow
+      color: {r: 1, g: 1, b: 1, a: 1}
+      icon: {fileID: 21300000, guid: 7f061f9b733d544119585050ccaf4f0b, type: 3}
+      videoClip: {fileID: 32900000, guid: 433a399c0e0e847efb4c70d8cadcdeb0, type: 3}
+      price: 0
+  - categoryName: Aurora_frame
+    crystalMainTypes: 0
+    type: 25
+    prefab: {fileID: 2259428950206378337, guid: 9d133d0d32d03492c897ba47b1d0a76d, type: 3}
+    sharedMaterial: {fileID: 2100000, guid: f489c8ef38c7654489409dbd26d6cf48, type: 2}
+    defaultSprite: {fileID: 21300000, guid: 35c67f3b7b6da46c6b9a90f9e351b352, type: 3}
+    defaultVideoClip: {fileID: 32900000, guid: 98a4b3a1f9ac94c438ef9b783724254a, type: 3}
+    price: 629
+    variants:
+    - variantName: Red
+      color: {r: 0.9245283, g: 0.039248828, b: 0.039248828, a: 1}
+      icon: {fileID: 21300000, guid: 04b2a6112656d45f2b7de17c02bbd618, type: 3}
+      videoClip: {fileID: 32900000, guid: ea61bd6b2d49a481e8386476cbe6bdab, type: 3}
+      price: 0
+    - variantName: green
+      color: {r: 0.0509078, g: 0.9811321, b: 0.11164256, a: 1}
+      icon: {fileID: 21300000, guid: 5bc077ded39894fbe84f9757d8310d7b, type: 3}
+      videoClip: {fileID: 32900000, guid: 39ae11bb13f7c42b699a1c4ddf58eea5, type: 3}
+      price: 0
+    - variantName: Yellow
+      color: {r: 0.9529412, g: 0.066666685, b: 0.7282723, a: 1}
+      icon: {fileID: 21300000, guid: 761274886d6404c8fa27f146d1f02537, type: 3}
+      videoClip: {fileID: 32900000, guid: dd5fa45d3c3cb498e86b6bc109f344cc, type: 3}
+      price: 0
+    - variantName: Magnet
+      color: {r: 0.9528302, g: 0.8425051, b: 0.06741722, a: 1}
+      icon: {fileID: 21300000, guid: c9ed0701a44cd419a80341436b0dc257, type: 3}
+      videoClip: {fileID: 32900000, guid: effe5c1e799a547039e72934b0482a55, type: 3}
+      price: 0
+    - variantName: Red
+      color: {r: 0.9529412, g: 0.25963736, b: 0.066666685, a: 1}
+      icon: {fileID: 21300000, guid: 542f78d50c6734b7e898a3a2b8287875, type: 3}
+      videoClip: {fileID: 32900000, guid: 483d6175809ec4885a7806301d5a3510, type: 3}
+      price: 0
+    - variantName: Orange
+      color: {r: 0.9811321, g: 0.39757636, b: 0.23602703, a: 1}
+      icon: {fileID: 21300000, guid: b2149be72eae74b32ac4f9194e2fe76f, type: 3}
+      videoClip: {fileID: 32900000, guid: effe5c1e799a547039e72934b0482a55, type: 3}
+      price: 0
+    - variantName: Orange
+      color: {r: 0.9529412, g: 0.25963736, b: 0.066666685, a: 1}
+      icon: {fileID: 21300000, guid: b2149be72eae74b32ac4f9194e2fe76f, type: 3}
+      videoClip: {fileID: 32900000, guid: effe5c1e799a547039e72934b0482a55, type: 3}
+      price: 0
+  - categoryName: Crystal_Angle
+    crystalMainTypes: 1
+    type: 9
+    prefab: {fileID: 2398647442130269468, guid: 774ddb227e293471cbae214b8468be7e, type: 3}
+    sharedMaterial: {fileID: 2100000, guid: c43d392fbcc5f664eabcd3e1b1a74b39, type: 2}
+    defaultSprite: {fileID: 21300000, guid: 5766b0f78186e4272a46f677f280b2c8, type: 3}
+    defaultVideoClip: {fileID: 32900000, guid: e7d8799c20398477cbe9bfcb97ab4c60, type: 3}
+    price: 629
+    variants:
+    - variantName: Red
+      color: {r: 1, g: 1, b: 1, a: 1}
+      icon: {fileID: 21300000, guid: 5766b0f78186e4272a46f677f280b2c8, type: 3}
+      videoClip: {fileID: 32900000, guid: e7d8799c20398477cbe9bfcb97ab4c60, type: 3}
+      price: 0
+  - categoryName: Crystal_starfish
+    crystalMainTypes: 0
+    type: 8
+    prefab: {fileID: 2068974088645072493, guid: 87b0fc32df44b44dc9945998bb1d121b, type: 3}
+    sharedMaterial: {fileID: 2100000, guid: 4ae6ba2eeb638ef44931749c8922ed96, type: 2}
+    defaultSprite: {fileID: 21300000, guid: e481a8a5bcaa240be80b052e01094f43, type: 3}
+    defaultVideoClip: {fileID: 32900000, guid: bc9d142fab8744006808a720e5b052de, type: 3}
+    price: 650
+    variants:
+    - variantName: Red
+      color: {r: 0.9245283, g: 0.06541473, b: 0.06541473, a: 1}
+      icon: {fileID: 21300000, guid: 0655a6adf74b04d09852f6a1ed76e53f, type: 3}
+      videoClip: {fileID: 32900000, guid: fca7661fcdb974d2a8647977406666f2, type: 3}
+      price: 0
+    - variantName: Blue
+      color: {r: 0.066666655, g: 0.48981994, b: 0.9254902, a: 1}
+      icon: {fileID: 21300000, guid: e481a8a5bcaa240be80b052e01094f43, type: 3}
+      videoClip: {fileID: 32900000, guid: bc9d142fab8744006808a720e5b052de, type: 3}
+      price: 0
+    - variantName: orange
+      color: {r: 0.9528302, g: 0.5807912, b: 0.03146139, a: 1}
+      icon: {fileID: 21300000, guid: 43d106873ac644fc7bae4f06357f6275, type: 3}
+      videoClip: {fileID: 32900000, guid: 6f33cb9a6e4a546fa8164045400f9402, type: 3}
+      price: 0
+    - variantName: Magnet
+      color: {r: 0.91910464, g: 0.9529412, b: 0.031372532, a: 1}
+      icon: {fileID: 21300000, guid: 015a076251e3c4d54ad0fc6d4b17940b, type: 3}
+      videoClip: {fileID: 32900000, guid: 75b7f7947f2644d6c8bad545fb4e1232, type: 3}
+      price: 0
+    - variantName: Yellow
+      color: {r: 0.688, g: 0.031372532, b: 0.7322193, a: 1}
+      icon: {fileID: 21300000, guid: 105c6ed04421b4905985e914b3ddee64, type: 3}
+      videoClip: {fileID: 32900000, guid: 7fb38fc72cc7d406ab2292fab16bd299, type: 3}
+      price: 0
+  - categoryName: Crystal_pumpkin
+    crystalMainTypes: 0
+    type: 7
+    prefab: {fileID: 919132149155446097, guid: 2b7ca59967724804ba807fbb53c01783, type: 3}
+    sharedMaterial: {fileID: 2100000, guid: 8e4f39d8802334e43832314ae812c6cd, type: 2}
+    defaultSprite: {fileID: 21300000, guid: 017d40dc43e22417785c2ae330525991, type: 3}
+    defaultVideoClip: {fileID: 32900000, guid: cd8b75919dd7a48ababf921f5e0448c7, type: 3}
+    price: 762
+    variants:
+    - variantName: Blue
+      color: {r: 0.054957304, g: 0.62418365, b: 0.8962264, a: 1}
+      icon: {fileID: 21300000, guid: 017d40dc43e22417785c2ae330525991, type: 3}
+      videoClip: {fileID: 32900000, guid: cd8b75919dd7a48ababf921f5e0448c7, type: 3}
+      price: 0
+    - variantName: Yellow
+      color: {r: 0.7264151, g: 0.044544343, b: 0.5536945, a: 1}
+      icon: {fileID: 21300000, guid: bfc920f959f3441aa9e13ca42193da71, type: 3}
+      videoClip: {fileID: 32900000, guid: 7fd33ba142a89470ca5d7abf8822292f, type: 3}
+      price: 0
+    - variantName: Orange
+      color: {r: 0.9622642, g: 0.4614815, b: 0.086240634, a: 1}
+      icon: {fileID: 21300000, guid: 25329a881d901483ea5b7d1c05157d28, type: 3}
+      videoClip: {fileID: 32900000, guid: f11abfcbf368f43f390a86f01a9c68a3, type: 3}
+      price: 0
+    - variantName: Magnet
+      color: {r: 0.9811321, g: 0.840608, b: 0.023139905, a: 1}
+      icon: {fileID: 21300000, guid: 0afd681f5619e456387a01f58a7b84ee, type: 3}
+      videoClip: {fileID: 32900000, guid: fea2aa0a21ebc4980971b1ca1bd9374a, type: 3}
+      price: 0
+    - variantName: Green
+      color: {r: 0.004538993, g: 0.9622642, b: 0.22825779, a: 1}
+      icon: {fileID: 21300000, guid: 699fa187e1f7f46f2a85b8300c93e6c2, type: 3}
+      videoClip: {fileID: 32900000, guid: ebc3da7e32f214663929d38b6075990f, type: 3}
+      price: 0
+  - categoryName: Dove_feather
+    crystalMainTypes: 1
+    type: 10
+    prefab: {fileID: 919132149155446097, guid: ae5b7900757442d44ac8ef0c4cd6d0f5, type: 3}
+    sharedMaterial: {fileID: 2100000, guid: ec230f3cbdc22774581a97d6b2f19bbc, type: 2}
+    defaultSprite: {fileID: 21300000, guid: 017ff1cc7b58a40dc9040726229b5a69, type: 3}
+    defaultVideoClip: {fileID: 32900000, guid: c87678408cc55413ca04d9b0d3c0b778, type: 3}
+    price: 356
+    variants:
+    - variantName: Red
+      color: {r: 1, g: 1, b: 1, a: 1}
+      icon: {fileID: 21300000, guid: 017ff1cc7b58a40dc9040726229b5a69, type: 3}
+      videoClip: {fileID: 32900000, guid: c87678408cc55413ca04d9b0d3c0b778, type: 3}
+      price: 0
+  - categoryName: FaceDrop
+    crystalMainTypes: 1
+    type: 11
+    prefab: {fileID: 919132149155446097, guid: b06ab3fc52aca5f42bfaceb66a491678, type: 3}
+    sharedMaterial: {fileID: 2100000, guid: 25cd7b1dea07368479e9fedf6f5d3101, type: 2}
+    defaultSprite: {fileID: 21300000, guid: 73ff5675aa07f43c98fec7b44d296d8d, type: 3}
+    defaultVideoClip: {fileID: 32900000, guid: 088162aeb133243b0ba91e768818e4f3, type: 3}
+    price: 572
+    variants:
+    - variantName: Red
+      color: {r: 1, g: 1, b: 1, a: 1}
+      icon: {fileID: 21300000, guid: 73ff5675aa07f43c98fec7b44d296d8d, type: 3}
+      videoClip: {fileID: 32900000, guid: 088162aeb133243b0ba91e768818e4f3, type: 3}
+      price: 0
+  - categoryName: Noth_start
+    crystalMainTypes: 1
+    type: 13
+    prefab: {fileID: 919132149155446097, guid: 222239711edbda440bfa52d211e3efc9, type: 3}
+    sharedMaterial: {fileID: 2100000, guid: e5ed85cfaae021e4eb9600a2562a98df, type: 2}
+    defaultSprite: {fileID: 21300000, guid: b5053860493224638b97c1b0617cd3fa, type: 3}
+    defaultVideoClip: {fileID: 32900000, guid: ff24ee1ed3d434823ad756f5bc57067b, type: 3}
+    price: 998
+    variants:
+    - variantName: Red
+      color: {r: 1, g: 1, b: 1, a: 1}
+      icon: {fileID: 21300000, guid: b5053860493224638b97c1b0617cd3fa, type: 3}
+      videoClip: {fileID: 32900000, guid: 9378a9aeada64424da303870ddac17d2, type: 3}
+      price: 0
+    - variantName: blue
+      color: {r: 1, g: 1, b: 1, a: 1}
+      icon: {fileID: 21300000, guid: b5053860493224638b97c1b0617cd3fa, type: 3}
+      videoClip: {fileID: 32900000, guid: d9cf944f06cdc4cbfaf187faa2e7c82c, type: 3}
+      price: 0
+    - variantName: Green
+      color: {r: 1, g: 1, b: 1, a: 1}
+      icon: {fileID: 21300000, guid: b5053860493224638b97c1b0617cd3fa, type: 3}
+      videoClip: {fileID: 32900000, guid: 3d472239121514706b7d3255d8b56dc4, type: 3}
+      price: 0
+    - variantName: Magnet
+      color: {r: 1, g: 1, b: 1, a: 1}
+      icon: {fileID: 21300000, guid: b5053860493224638b97c1b0617cd3fa, type: 3}
+      videoClip: {fileID: 32900000, guid: 6834ea0130cf84e99b780ad5947d8ac6, type: 3}
+      price: 0
+    - variantName: Yellow
+      color: {r: 1, g: 1, b: 1, a: 1}
+      icon: {fileID: 21300000, guid: b5053860493224638b97c1b0617cd3fa, type: 3}
+      videoClip: {fileID: 32900000, guid: f6158bcf56eb1485aa3417f430cb6379, type: 3}
+      price: 0
+    - variantName: Orange
+      color: {r: 1, g: 1, b: 1, a: 1}
+      icon: {fileID: 21300000, guid: b5053860493224638b97c1b0617cd3fa, type: 3}
+      videoClip: {fileID: 32900000, guid: 620755cfe7021480d9b55de08df8734f, type: 3}
+      price: 0
+    - variantName: Orange
+      color: {r: 1, g: 1, b: 1, a: 1}
+      icon: {fileID: 21300000, guid: b5053860493224638b97c1b0617cd3fa, type: 3}
+      videoClip: {fileID: 32900000, guid: e375c9f14566f4146b8dcc14493c61e7, type: 3}
+      price: 0
+  - categoryName: Rock_start
+    crystalMainTypes: 0
+    type: 14
+    prefab: {fileID: 919132149155446097, guid: 25ca0ef63f9ea4c40ab0b433c13ec00e, type: 3}
+    sharedMaterial: {fileID: 2100000, guid: caec17acde551814a8b4ea5ab3f8ec02, type: 2}
+    defaultSprite: {fileID: 21300000, guid: 3a8b739ef8aaf4f11855c7ab42160934, type: 3}
+    defaultVideoClip: {fileID: 32900000, guid: fb0602b3d19004918848c042a4829b92, type: 3}
+    price: 244
+    variants:
+    - variantName: Red
+      color: {r: 0.9150943, g: 0, b: 0, a: 1}
+      icon: {fileID: 21300000, guid: afa6f5e17992e4158a888c1e17c17290, type: 3}
+      videoClip: {fileID: 32900000, guid: 89711d793cbe74609932ccfbd3a29809, type: 3}
+      price: 0
+    - variantName: Blue
+      color: {r: 0.06741722, g: 0.51282454, b: 0.9528302, a: 1}
+      icon: {fileID: 21300000, guid: 3a8b739ef8aaf4f11855c7ab42160934, type: 3}
+      videoClip: {fileID: 32900000, guid: fb0602b3d19004918848c042a4829b92, type: 3}
+      price: 0
+    - variantName: Magnet
+      color: {r: 0.06741722, g: 0.51282454, b: 0.9528302, a: 1}
+      icon: {fileID: 21300000, guid: 0baa973117f8a44b4887caa320397eeb, type: 3}
+      videoClip: {fileID: 32900000, guid: 833fb8478055f449c9c22940163963b5, type: 3}
+      price: 0
+    - variantName: Yellow
+      color: {r: 0.9529412, g: 0.066666685, b: 0.7821507, a: 1}
+      icon: {fileID: 21300000, guid: e7507ceefec6d40a3adc5af9dab17081, type: 3}
+      videoClip: {fileID: 32900000, guid: 36c2d800cc6b649b3bf33d4ce806fd98, type: 3}
+      price: 0
+    - variantName: Orange
+      color: {r: 0.9529412, g: 0.066666685, b: 0.110029705, a: 1}
+      icon: {fileID: 21300000, guid: d2fbf4d6e712a4c40b7570359a37fd73, type: 3}
+      videoClip: {fileID: 32900000, guid: 3e08f84b40d87456285006a8bb1812cc, type: 3}
+      price: 0
+    - variantName: Green
+      color: {r: 0.11740507, g: 0.9529412, b: 0.066666685, a: 1}
+      icon: {fileID: 21300000, guid: cea9a9a49a4fe46b49c33ec888fff9e7, type: 3}
+      videoClip: {fileID: 32900000, guid: acd30a93bcfc74de8ac3b177649c2ac1, type: 3}
+      price: 0
+  - categoryName: whitewind
+    crystalMainTypes: 0
+    type: 15
+    prefab: {fileID: 919132149155446097, guid: 45a209594bcc9254eb5e900b48cf1a1f, type: 3}
+    sharedMaterial: {fileID: 2100000, guid: 0517557e6a009874f9d2385f553e357c, type: 2}
+    defaultSprite: {fileID: 21300000, guid: 3e2aa9fbec47a4a44ab5707a5571a95e, type: 3}
+    defaultVideoClip: {fileID: 32900000, guid: 89674d6ddadee4f8db0ddc5cc7656e76, type: 3}
+    price: 310
+    variants:
+    - variantName: Magnet
+      color: {r: 0.9137255, g: 0.6946092, b: 0, a: 1}
+      icon: {fileID: 21300000, guid: 6658119e7810f4881ba269bd9f41c495, type: 3}
+      videoClip: {fileID: 32900000, guid: 89674d6ddadee4f8db0ddc5cc7656e76, type: 3}
+      price: 0
+    - variantName: Green
+      color: {r: 0.066666685, g: 0.9529412, b: 0.18967876, a: 1}
+      icon: {fileID: 21300000, guid: 3e2aa9fbec47a4a44ab5707a5571a95e, type: 3}
+      videoClip: {fileID: 32900000, guid: ad2c409dbf1e9452bb27610db69ea893, type: 3}
+      price: 0
+  - categoryName: Crystal_rosset
+    crystalMainTypes: 1
+    type: 16
+    prefab: {fileID: 2259428950206378337, guid: 9d133d0d32d03492c897ba47b1d0a76d, type: 3}
+    sharedMaterial: {fileID: 2100000, guid: f489c8ef38c7654489409dbd26d6cf48, type: 2}
+    defaultSprite: {fileID: 21300000, guid: 5973bbc5083e6438890d89f42a930d07, type: 3}
+    defaultVideoClip: {fileID: 32900000, guid: 14bc827a5ed3e480fa073dc50fcbc91a, type: 3}
+    price: 241
+    variants:
+    - variantName: Magnet
+      color: {r: 1, g: 1, b: 1, a: 1}
+      icon: {fileID: 21300000, guid: 5973bbc5083e6438890d89f42a930d07, type: 3}
+      videoClip: {fileID: 32900000, guid: 14bc827a5ed3e480fa073dc50fcbc91a, type: 3}
+      price: 0
+  - categoryName: springCanopy
+    crystalMainTypes: 0
+    type: 17
+    prefab: {fileID: 2259428950206378337, guid: 9d133d0d32d03492c897ba47b1d0a76d, type: 3}
+    sharedMaterial: {fileID: 2100000, guid: f489c8ef38c7654489409dbd26d6cf48, type: 2}
+    defaultSprite: {fileID: 21300000, guid: c8c480209102f498aad5507300abb5aa, type: 3}
+    defaultVideoClip: {fileID: 32900000, guid: c50156a66076948edb8f0f1982adbfbd, type: 3}
+    price: 489
+    variants:
+    - variantName: Magnet
+      color: {r: 1, g: 1, b: 1, a: 1}
+      icon: {fileID: 21300000, guid: 2b84ac58ed93d4ae4b37f2ab0d977d16, type: 3}
+      videoClip: {fileID: 32900000, guid: bcffe5b749c5b4df2ae015e078b1ed21, type: 3}
+      price: 0
+    - variantName: Red
+      color: {r: 1, g: 1, b: 1, a: 1}
+      icon: {fileID: 21300000, guid: 57e8b8ec785594eae97c50f7d130ab82, type: 3}
+      videoClip: {fileID: 32900000, guid: b82753a96ccaf4c76809cc3e5825fa76, type: 3}
+      price: 0
+    - variantName: Green
+      color: {r: 1, g: 1, b: 1, a: 1}
+      icon: {fileID: 21300000, guid: c8c480209102f498aad5507300abb5aa, type: 3}
+      videoClip: {fileID: 32900000, guid: c50156a66076948edb8f0f1982adbfbd, type: 3}
+      price: 0
+  - categoryName: wave
+    crystalMainTypes: 1
+    type: 19
+    prefab: {fileID: 2259428950206378337, guid: 9d133d0d32d03492c897ba47b1d0a76d, type: 3}
+    sharedMaterial: {fileID: 2100000, guid: f489c8ef38c7654489409dbd26d6cf48, type: 2}
+    defaultSprite: {fileID: 21300000, guid: 618848e1f80c14cc58730f0bccff5214, type: 3}
+    defaultVideoClip: {fileID: 32900000, guid: db84456ebe2c34cf98f4b5e26a8e426a, type: 3}
+    price: 653
+    variants:
+    - variantName: Magnet
+      color: {r: 1, g: 1, b: 1, a: 1}
+      icon: {fileID: 21300000, guid: 618848e1f80c14cc58730f0bccff5214, type: 3}
+      videoClip: {fileID: 32900000, guid: db84456ebe2c34cf98f4b5e26a8e426a, type: 3}
+      price: 0
+  - categoryName: Koifish
+    crystalMainTypes: 1
+    type: 20
+    prefab: {fileID: 2259428950206378337, guid: 9d133d0d32d03492c897ba47b1d0a76d, type: 3}
+    sharedMaterial: {fileID: 2100000, guid: f489c8ef38c7654489409dbd26d6cf48, type: 2}
+    defaultSprite: {fileID: 21300000, guid: b1848d5b34f194afe9f66eedb9a9768b, type: 3}
+    defaultVideoClip: {fileID: 32900000, guid: a6eac56a8542946cfa9fa895330dd90e, type: 3}
+    price: 901
+    variants:
+    - variantName: Magnet
+      color: {r: 1, g: 1, b: 1, a: 1}
+      icon: {fileID: 21300000, guid: b1848d5b34f194afe9f66eedb9a9768b, type: 3}
+      videoClip: {fileID: 32900000, guid: a6eac56a8542946cfa9fa895330dd90e, type: 3}
+      price: 0
+  - categoryName: H_D
+    crystalMainTypes: 1
+    type: 21
+    prefab: {fileID: 2259428950206378337, guid: 9d133d0d32d03492c897ba47b1d0a76d, type: 3}
+    sharedMaterial: {fileID: 2100000, guid: f489c8ef38c7654489409dbd26d6cf48, type: 2}
+    defaultSprite: {fileID: 21300000, guid: ea27a3d32fe9947aebc7cfe9ac74e51e, type: 3}
+    defaultVideoClip: {fileID: 32900000, guid: c5f46d2143c1d4396bc3963627ee69c5, type: 3}
+    price: 1053
+    variants:
+    - variantName: Magnet
+      color: {r: 1, g: 1, b: 1, a: 1}
+      icon: {fileID: 21300000, guid: ea27a3d32fe9947aebc7cfe9ac74e51e, type: 3}
+      videoClip: {fileID: 32900000, guid: c5f46d2143c1d4396bc3963627ee69c5, type: 3}
+      price: 0
+  - categoryName: H_S
+    crystalMainTypes: 1
+    type: 22
+    prefab: {fileID: 2259428950206378337, guid: 9d133d0d32d03492c897ba47b1d0a76d, type: 3}
+    sharedMaterial: {fileID: 2100000, guid: f489c8ef38c7654489409dbd26d6cf48, type: 2}
+    defaultSprite: {fileID: 21300000, guid: ebe08665f6fa94bb190dc59b32315ad9, type: 3}
+    defaultVideoClip: {fileID: 32900000, guid: ed15833c8d3c249a1b6456e660a86045, type: 3}
+    price: 223
+    variants:
+    - variantName: Yellow
+      color: {r: 1, g: 1, b: 1, a: 1}
+      icon: {fileID: 21300000, guid: ebe08665f6fa94bb190dc59b32315ad9, type: 3}
+      videoClip: {fileID: 32900000, guid: c5f46d2143c1d4396bc3963627ee69c5, type: 3}
+      price: 0
+  - categoryName: Desert_lily
+    crystalMainTypes: 1
+    type: 23
+    prefab: {fileID: 2259428950206378337, guid: 9d133d0d32d03492c897ba47b1d0a76d, type: 3}
+    sharedMaterial: {fileID: 2100000, guid: f489c8ef38c7654489409dbd26d6cf48, type: 2}
+    defaultSprite: {fileID: 21300000, guid: 2a1df75d5f810481c967cc6593121bac, type: 3}
+    defaultVideoClip: {fileID: 32900000, guid: 46c477a7281cb472c8650cd04ee7ec01, type: 3}
+    price: 515
+    variants:
+    - variantName: Yellow
+      color: {r: 1, g: 1, b: 1, a: 1}
+      icon: {fileID: 21300000, guid: b1848d5b34f194afe9f66eedb9a9768b, type: 3}
+      videoClip: {fileID: 32900000, guid: 46c477a7281cb472c8650cd04ee7ec01, type: 3}
+      price: 0
+  - categoryName: wing_open
+    crystalMainTypes: 0
+    type: 26
+    prefab: {fileID: 2259428950206378337, guid: 9d133d0d32d03492c897ba47b1d0a76d, type: 3}
+    sharedMaterial: {fileID: 2100000, guid: f489c8ef38c7654489409dbd26d6cf48, type: 2}
+    defaultSprite: {fileID: 21300000, guid: a9e747d13ebb04b4687ba1be94d6e9b5, type: 3}
+    defaultVideoClip: {fileID: 32900000, guid: 2a660ea0cf05e47fb8f965d64f32240f, type: 3}
+    price: 1053
+    variants:
+    - variantName: Magnet
+      color: {r: 1, g: 1, b: 1, a: 1}
+      icon: {fileID: 21300000, guid: d7f1d7224e7ae436598e3dd208004a07, type: 3}
+      videoClip: {fileID: 32900000, guid: 5bae9e32548ad473bb0a8a36347b5c49, type: 3}
+      price: 0
+  - categoryName: wing_close
+    crystalMainTypes: 0
+    type: 27
+    prefab: {fileID: 2259428950206378337, guid: 9d133d0d32d03492c897ba47b1d0a76d, type: 3}
+    sharedMaterial: {fileID: 2100000, guid: f489c8ef38c7654489409dbd26d6cf48, type: 2}
+    defaultSprite: {fileID: 21300000, guid: d7f1d7224e7ae436598e3dd208004a07, type: 3}
+    defaultVideoClip: {fileID: 32900000, guid: dd9a0c9dea4e84ba4b20bffdd2048c0b, type: 3}
+    price: 1200
+    variants:
+    - variantName: Magnet
+      color: {r: 1, g: 1, b: 1, a: 1}
+      icon: {fileID: 21300000, guid: d7f1d7224e7ae436598e3dd208004a07, type: 3}
+      videoClip: {fileID: 32900000, guid: 5bae9e32548ad473bb0a8a36347b5c49, type: 3}
+      price: 1200

@@ -52,7 +52,7 @@ public class SphericalSurface : HangerSurface
         // Length is the vertical distance from the anchor to the calculated surface Y
         float length = anchorPos.y - surface_y;
 
-        return Mathf.Max(0.1f, length); // Ensure length is positive
+        return ApplyHeightOffset(Mathf.Max(0.1f, length)); // Ensure length is positive
     }
 
     /// <summary>

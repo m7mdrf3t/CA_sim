@@ -1,0 +1,46 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 105ce8c9999564e318016d03648b4518, type: 3}
+  m_Name: CompositionConfig
+  m_EditorClassIdentifier: Assembly-CSharp::CompositionConfig
+  category1Title: Central
+  shapeType1: 1
+  category1Placeholder: {fileID: 21300000, guid: e9c77216c4f294fae877f5f9645d4222, type: 3}
+  category1PlaceholderName: Central
+  category1GallerySprites:
+  - {fileID: 21300000, guid: 42e33dbde81c441f09555ed1875f1e24, type: 3}
+  - {fileID: 21300000, guid: 0ff14ddea000f4f34b17e59789e00537, type: 3}
+  - {fileID: 21300000, guid: f7a57b394910d40d68a0c0a2dab464d2, type: 3}
+  - {fileID: 21300000, guid: 96efa2e580a38441eaaa8696e09380d9, type: 3}
+  - {fileID: 21300000, guid: cecf546d45f6e4a74ab8565e5fe7e40a, type: 3}
+  - {fileID: 21300000, guid: ce9301d50d934440489ba2108d7ee903, type: 3}
+  surfaceTypes1: 010000000700000002000000050000000300000008000000
+  category2Title: Area
+  shapeType2: 0
+  category2Placeholder: {fileID: 21300000, guid: def83f98ca88a4cb48e39e1932106e94, type: 3}
+  category2PlaceholderName: Area
+  category2GallerySprites:
+  - {fileID: 21300000, guid: 38be7f89d3ca64c41803e9726a2a6f73, type: 3}
+  - {fileID: 21300000, guid: 1e9d017bbe6de482aad4ad96f3a9b107, type: 3}
+  surfaceTypes2: 02000000060000000000000000000000
+  category3Title: Vertical
+  category3Placeholder: {fileID: 21300000, guid: 9d598e1dddefd49af9396d5dd4c05388, type: 3}
+  category3PlaceholderName: Vertical
+  category3GallerySprites:
+  - {fileID: 21300000, guid: 985dd22b5c65c4cd89e334af7695698c, type: 3}
+  - {fileID: 21300000, guid: d0484d98630e14841ad101f3f4342454, type: 3}
+  category4Title: Linear
+  category4Placeholder: {fileID: 21300000, guid: 90da4415374c1432793b5ce37194fa8a, type: 3}
+  category4PlaceholderName: Linear
+  category4GallerySprites:
+  - {fileID: 21300000, guid: c1e0a44dfe7e04a368b15f2a84b7f792, type: 3}
+  - {fileID: 21300000, guid: c9d6c5cd938f147f0a238e944019b585, type: 3}

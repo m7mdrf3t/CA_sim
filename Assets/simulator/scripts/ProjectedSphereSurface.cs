@@ -52,7 +52,7 @@ public class ProjectedSphereSurface : HangerSurface
         float chosen = PickHemisphereHit(O, d, C, t0, t1, useBottomHalf);
 
         // If none matched, return 0 (miss or wrong hemisphere)
-        return chosen > 0f ? chosen : 0f;
+        return ApplyHeightOffset(chosen > 0f ? chosen : 0f);
     }
 
     float PickHemisphereHit(Vector3 O, Vector3 d, Vector3 C, float t0, float t1, bool bottom)

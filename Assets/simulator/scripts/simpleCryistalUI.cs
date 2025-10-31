@@ -21,7 +21,7 @@ public class simpleCryistalUI : MonoBehaviour
 
     [Header("Configuration")]
     [Tooltip("Which crystal type to use (default: Standard)")]
-    [SerializeField] private CrystalType crystalTypeToUse = CrystalType.Breeze;
+    [SerializeField] private CrystalType crystalTypeToUse = CrystalType.Galaxy;
 
     private void Start()
     {

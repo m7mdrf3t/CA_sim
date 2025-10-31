@@ -23,9 +23,12 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/simulator/Scene/Simulator.unity
     guid: e3fcdba72c6d2498e80c236823679cbd
-  - enabled: 1
+  - enabled: 0
     path: Assets/simulator/Scene/Simulator-points.unity
     guid: 626262856904f45e596bafe5d60fc4e0
+  - enabled: 1
+    path: Assets/simulator/Scene/Simulator-Sheet.unity
+    guid: e5ac223bc45fb43cc807f25b63a9ce82
   m_configObjects:
     Unity.XR.Oculus.Settings: {fileID: 11400000, guid: 290a6e6411d135049940bec2237b8938, type: 2}
     com.unity.input.settings: {fileID: 11400000, guid: 9e7be553448fa2546aea5752021cbcf7, type: 2}
